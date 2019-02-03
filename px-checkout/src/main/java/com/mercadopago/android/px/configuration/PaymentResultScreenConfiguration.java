@@ -704,8 +704,7 @@ public final class PaymentResultScreenConfiguration implements Serializable {
         }
 
         /**
-         * Custom fragment that will appear before payment method description
-         * inside "congrats" result screen.
+         * Custom fragment that will appear before payment method description inside "congrats" result screen.
          *
          * @param zClass fragment class
          * @return builder
@@ -716,8 +715,7 @@ public final class PaymentResultScreenConfiguration implements Serializable {
         }
 
         /**
-         * Custom fragment that will appear after payment method description
-         * inside "congrats" result screen.
+         * Custom fragment that will appear after payment method description inside "congrats" result screen.
          *
          * @param zClass fragment class
          * @return builder

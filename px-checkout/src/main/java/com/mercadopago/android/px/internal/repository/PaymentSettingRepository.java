@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.model.commission.ChargeRule;
+import com.mercadopago.android.px.model.commission.PaymentTypeChargeRule;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public interface PaymentSettingRepository {
     void configurePrivateKey(@Nullable final String privateKey);
 
     @NonNull
-    List<ChargeRule> chargeRules();
+    List<PaymentTypeChargeRule> chargeRules();
 
     @NonNull
     PaymentConfiguration getPaymentConfiguration();

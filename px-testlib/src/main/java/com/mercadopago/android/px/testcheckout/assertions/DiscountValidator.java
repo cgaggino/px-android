@@ -10,7 +10,6 @@ import com.mercadopago.android.px.testcheckout.pages.InstallmentsPage;
 import com.mercadopago.android.px.testcheckout.pages.OneTapPage;
 import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
 import com.mercadopago.android.px.testcheckout.pages.ReviewAndConfirmPage;
-import javax.annotation.Nonnull;
 import org.hamcrest.Matcher;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -22,10 +21,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public abstract class DiscountValidator extends DefaultValidator {
-    @Nonnull protected final Campaign campaign;
-    @Nonnull protected final Discount discount;
+    @NonNull protected final Campaign campaign;
+    @NonNull protected final Discount discount;
 
-    public DiscountValidator(@Nonnull final Campaign campaign, @NonNull final Discount discount) {
+    public DiscountValidator(@NonNull final Campaign campaign, @NonNull final Discount discount) {
         this.campaign = campaign;
         this.discount = discount;
     }
@@ -73,7 +72,8 @@ public abstract class DiscountValidator extends DefaultValidator {
                     discount.getPercentOff());
         } else {
             amountDescriptionMessage = getInstrumentation().getTargetContext()
-                .getString(com.mercadopago.android.px.R.string.px_discount_amount_off_with_minus, discount.getAmountOff());
+                .getString(com.mercadopago.android.px.R.string.px_discount_amount_off_with_minus,
+                    discount.getAmountOff());
         }
         return amountDescriptionMessage;
     }

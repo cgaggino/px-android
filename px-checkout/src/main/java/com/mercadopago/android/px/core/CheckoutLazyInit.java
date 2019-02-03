@@ -11,9 +11,8 @@ public abstract class CheckoutLazyInit {
     private PrefetchService prefetchService;
 
     /**
-     * CheckoutLazyInit allows you to prefetch {@link MercadoPagoCheckout} information.
-     * Using this Lazy Builder you can avoid having a loading after call
-     * {@link MercadoPagoCheckout#startPayment(Context, int)}
+     * CheckoutLazyInit allows you to prefetch {@link MercadoPagoCheckout} information. Using this Lazy Builder you can
+     * avoid having a loading after call {@link MercadoPagoCheckout#startPayment(Context, int)}
      *
      * @param builder Checkout builder to prefetch
      */
@@ -34,16 +33,20 @@ public abstract class CheckoutLazyInit {
     }
 
     /**
-     * @deprecated  Not for public use.
-     *    This method is expected to be retained only as a
-     *    private method.  Please use {@link #cancel()})}
+     * @deprecated Not for public use. This method is expected to be retained only as a private method.  Please use
+     * {@link #cancel()})}
      */
-    @Deprecated public final void fail() {
+    @Deprecated
+    public final void fail() {
         // Generates new session.
         fail(builder.build());
     }
 
-    public void cancel() {
+    /* default */ final void failure() {
+        fail(builder.build());
+    }
+
+    public final void cancel() {
         if (prefetchService != null) {
             prefetchService.cancel();
         }

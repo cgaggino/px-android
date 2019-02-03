@@ -10,7 +10,7 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
-import com.mercadopago.android.px.model.PaymentMethodSearchBody;
+import com.mercadopago.android.px.model.internal.PaymentMethodSearchBody;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
@@ -123,7 +123,8 @@ public class GroupsService implements GroupsRepository {
             .setMarketplace(checkoutPreference.getMarketplace())
             .setProductId(discountParamsConfiguration.getProductId())
             .setLabels(discountParamsConfiguration.getLabels())
-            .setCharges(paymentSettingRepository.getPaymentConfiguration().getCharges()).build();
+            .setCharges(paymentSettingRepository.getPaymentConfiguration().getCharges())
+            .build();
 
         final Map<String, Object> body = JsonUtil.getInstance().getMapFromObject(paymentMethodSearchBody);
 

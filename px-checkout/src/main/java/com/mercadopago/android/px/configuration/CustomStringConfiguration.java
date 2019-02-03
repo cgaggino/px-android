@@ -3,8 +3,9 @@ package com.mercadopago.android.px.configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import com.mercadopago.android.px.R;
+import java.io.Serializable;
 
-public class CustomStringConfiguration {
+public final class CustomStringConfiguration implements Serializable {
 
     @StringRes private final int mainVerbStringResourceId;
 

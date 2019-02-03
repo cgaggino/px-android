@@ -36,17 +36,14 @@ import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
             session.getConfigurationModule().getPaymentSettings();
 
         // TODO: use executor service
-        currentFetch = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        currentFetch = new Thread(() -> {
 
-                final String checkoutPreferenceId =
-                    paymentSettings.getCheckoutPreferenceId();
-                if (!TextUtil.isEmpty(checkoutPreferenceId)) {
-                    fetchPreference();
-                } else {
-                    fetchGroups();
-                }
+            final String checkoutPreferenceId =
+                paymentSettings.getCheckoutPreferenceId();
+            if (!TextUtil.isEmpty(checkoutPreferenceId)) {
+                fetchPreference();
+            } else {
+                fetchGroups();
             }
         });
         currentFetch.start();
@@ -92,22 +89,14 @@ import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
     }
 
     /* default */ void postSuccess() {
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                checkout.prefetch = true;
-                checkoutLazyInitCallback.success(checkout);
-            }
+        mainHandler.post(() -> {
+            checkout.prefetch = true;
+            checkoutLazyInitCallback.success(checkout);
         });
     }
 
     /* default */ void postError() {
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                checkoutLazyInitCallback.fail();
-            }
-        });
+        mainHandler.post(() -> checkoutLazyInitCallback.failure());
     }
 
     public void cancel() {

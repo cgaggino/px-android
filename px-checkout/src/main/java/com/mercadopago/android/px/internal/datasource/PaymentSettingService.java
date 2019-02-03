@@ -9,7 +9,7 @@ import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.model.commission.ChargeRule;
+import com.mercadopago.android.px.model.commission.PaymentTypeChargeRule;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.Calendar;
 import java.util.Collections;
@@ -103,7 +103,7 @@ public class PaymentSettingService implements PaymentSettingRepository {
 
     @NonNull
     @Override
-    public List<ChargeRule> chargeRules() {
+    public List<PaymentTypeChargeRule> chargeRules() {
         final PaymentConfiguration paymentConfiguration = getPaymentConfiguration();
         return paymentConfiguration.getCharges();
     }

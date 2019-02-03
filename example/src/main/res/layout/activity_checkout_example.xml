@@ -4,15 +4,6 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
-
     <ScrollView
         android:id="@+id/regularLayout"
         android:layout_width="match_parent"

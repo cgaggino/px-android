@@ -15,15 +15,23 @@ import java.util.ArrayList;
 
 public class PayerCostRepositoryImpl implements PayerCostRepository {
 
+    @NonNull private final GroupsRepository groupsRepository;
     /* default */ ConfigurationSolver configurationSolver;
-    private final UserSelectionRepository userSelectionRepository;
+    @NonNull private final UserSelectionRepository userSelectionRepository;
 
     public PayerCostRepositoryImpl(@NonNull final GroupsRepository groupsRepository,
         @NonNull final UserSelectionRepository userSelectionRepository) {
 
         this.userSelectionRepository = userSelectionRepository;
+        this.groupsRepository = groupsRepository;
+    }
 
-        groupsRepository.getGroups().enqueue(new Callback<PaymentMethodSearch>() {
+    private void init() {
+        if (configurationSolver != null) {
+            return;
+        }
+
+        groupsRepository.getGroups().execute(new Callback<PaymentMethodSearch>() {
             @Override
             public void success(final PaymentMethodSearch paymentMethodSearch) {
                 configurationSolver =
@@ -41,6 +49,8 @@ public class PayerCostRepositoryImpl implements PayerCostRepository {
     @NonNull
     @Override
     public AmountConfiguration getCurrentConfiguration() {
+        init();
+
         final Card card = userSelectionRepository.getCard();
         // Remember to prioritize the selected discount over the rest when the selector feature is added.
 
@@ -61,6 +71,7 @@ public class PayerCostRepositoryImpl implements PayerCostRepository {
     @NonNull
     @Override
     public AmountConfiguration getConfigurationFor(@NonNull final String cardId) {
+        init();
         final String configurationHash = configurationSolver.getConfigurationHashFor(cardId);
         final AmountConfiguration result =
             configurationSolver.getPayerCostConfigurationFor(cardId, configurationHash);

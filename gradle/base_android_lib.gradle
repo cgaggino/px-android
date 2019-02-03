@@ -6,6 +6,12 @@ if (project.hasProperty('production')) {
 
 
 android {
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     compileSdkVersion api_level as int
     buildToolsVersion build_tools_version as String
 
@@ -20,6 +26,7 @@ android {
             resConfigs("en", "xxhdpi")
             aaptOptions.cruncherEnabled = false
         }
+
     }
 
     dexOptions {
@@ -28,11 +35,6 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
     }
 
     buildTypes {

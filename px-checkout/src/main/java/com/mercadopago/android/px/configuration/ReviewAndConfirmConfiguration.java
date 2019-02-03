@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @SuppressWarnings("unused")
-public class ReviewAndConfirmConfiguration implements Serializable {
+public final class ReviewAndConfirmConfiguration implements Serializable {
 
     @Deprecated
     @Nullable
@@ -236,8 +236,8 @@ public class ReviewAndConfirmConfiguration implements Serializable {
          * @param zClass Fragment class
          * @param args Bundle for fragment
          * @return builder
-         * @deprecated will be deprecated on V5 {Replaced by
-         *    {@link DynamicFragmentConfiguration.Builder#addDynamicCreator(DynamicFragmentConfiguration.FragmentLocation, DynamicFragmentCreator)}
+         * @deprecated will be deprecated on V5 {Replaced by {@link DynamicFragmentConfiguration.Builder#addDynamicCreator(DynamicFragmentConfiguration.FragmentLocation,
+         * DynamicFragmentCreator)}
          */
         @Deprecated
         public Builder setTopFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {
@@ -250,8 +250,8 @@ public class ReviewAndConfirmConfiguration implements Serializable {
          *
          * @param zClass Fragment class
          * @param args Bundle for fragment
-         * @deprecated will be deprecated on V5 {Replaced by
-         *    {@link DynamicFragmentConfiguration.Builder#addDynamicCreator(DynamicFragmentConfiguration.FragmentLocation, DynamicFragmentCreator)}
+         * @deprecated will be deprecated on V5 {Replaced by {@link DynamicFragmentConfiguration.Builder#addDynamicCreator(DynamicFragmentConfiguration.FragmentLocation,
+         * DynamicFragmentCreator)}
          */
         @Deprecated
         public Builder setBottomFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {

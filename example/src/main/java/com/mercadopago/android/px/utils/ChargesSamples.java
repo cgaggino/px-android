@@ -6,7 +6,6 @@ import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.internal.features.plugins.SamplePaymentProcessor;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentTypeChargeRule;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ final class ChargesSamples {
     }
 
     private static MercadoPagoCheckout.Builder chargeType(final String type) {
-        final Collection<ChargeRule> charges = new ArrayList<>();
+        final Collection<PaymentTypeChargeRule> charges = new ArrayList<>();
         charges.add(new PaymentTypeChargeRule(type, BigDecimal.TEN));
 
         final BusinessPayment payment = BusinessSamples.getBusinessRejected();

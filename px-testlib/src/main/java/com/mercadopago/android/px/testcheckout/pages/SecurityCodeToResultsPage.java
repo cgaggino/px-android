@@ -1,9 +1,9 @@
 package com.mercadopago.android.px.testcheckout.pages;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import com.mercadopago.android.px.testcheckout.assertions.CheckoutValidator;
 import com.mercadopago.android.testlib.pages.PageObject;
-import javax.annotation.Nonnull;
 import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -17,7 +17,7 @@ public class SecurityCodeToResultsPage extends PageObject<CheckoutValidator> {
         // This constructor is intentionally empty. Nothing special is needed here.
     }
 
-    public SecurityCodeToResultsPage(@Nonnull final CheckoutValidator validator) {
+    public SecurityCodeToResultsPage(@NonNull final CheckoutValidator validator) {
         super(validator);
     }
 

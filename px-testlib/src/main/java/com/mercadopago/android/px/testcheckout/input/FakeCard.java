@@ -1,8 +1,8 @@
 package com.mercadopago.android.px.testcheckout.input;
 
+import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
 public class FakeCard extends Card {
 

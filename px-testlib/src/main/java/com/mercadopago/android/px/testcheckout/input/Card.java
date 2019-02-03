@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.testcheckout.input;
 
-import javax.annotation.Nullable;
+import android.support.annotation.Nullable;
 
 public class Card {
 

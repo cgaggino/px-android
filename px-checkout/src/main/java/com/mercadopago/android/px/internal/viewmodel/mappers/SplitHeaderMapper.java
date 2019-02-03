@@ -22,7 +22,8 @@ public class SplitHeaderMapper extends Mapper<ExpressMetadata, SplitPaymentHeade
         if (val.isCard()) {
             final AmountConfiguration config =
                 amountConfigurationRepository.getConfigurationFor(val.getCard().getId());
-            return config.allowSplit() ? new SplitPaymentHeaderAdapter.SplitModel(currencyId, config.split)
+            return config.allowSplit() ? new SplitPaymentHeaderAdapter.SplitModel(currencyId,
+                config.getSplitConfiguration())
                 : new SplitPaymentHeaderAdapter.Empty();
         }
         return new SplitPaymentHeaderAdapter.Empty();

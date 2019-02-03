@@ -2,11 +2,12 @@ package com.mercadopago.android.px.configuration;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-public class DiscountParamsConfiguration {
+public final class DiscountParamsConfiguration implements Serializable {
 
     @NonNull private final Set<String> labels;
     @Nullable private final String productId;

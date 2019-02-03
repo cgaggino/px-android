@@ -2,14 +2,13 @@ package com.mercadopago.android.px.internal.features;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
-import com.mercadopago.android.px.internal.base.MvpPresenter;
+import com.mercadopago.android.px.internal.base.BasePresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookHelper;
-import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
 import com.mercadopago.android.px.internal.navigation.DefaultPayerInformationDriver;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -34,10 +33,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, PaymentVaultProvider>
-    implements AmountView.OnClick {
-
-    private static final String MISMATCHING_PAYMENT_METHOD_ERROR = "Payment method in search not found";
+public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
+    implements AmountView.OnClick, PaymentVault.Actions {
 
     @NonNull
     private final PaymentSettingRepository paymentSettingRepository;
@@ -78,7 +75,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
             validateParameters();
             initPaymentVaultFlow();
         } catch (final IllegalStateException exception) {
-            getView().showError(new MercadoPagoError(exception.getMessage(), false), "");
+            getView().showError(MercadoPagoError.createNotRecoverable(exception.getMessage()), "");
         }
     }
 
@@ -97,7 +94,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
             @Override
             public void failure(final ApiException apiException) {
                 getView()
-                    .showError(new MercadoPagoError(apiException, ApiException.ErrorCodes.PAYMENT_METHOD_NOT_FOUND),
+                    .showError(MercadoPagoError.createNotRecoverable(apiException, ApiException.ErrorCodes.PAYMENT_METHOD_NOT_FOUND),
                         ApiException.ErrorCodes.PAYMENT_METHOD_NOT_FOUND);
                 setFailureRecovery(new FailureRecovery() {
                     @Override
@@ -135,13 +132,13 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         final PaymentPreference paymentPreference =
             paymentSettingRepository.getCheckoutPreference().getPaymentPreference();
         if (!paymentPreference.validMaxInstallments()) {
-            throw new IllegalStateException(getResourcesProvider().getInvalidMaxInstallmentsErrorMessage());
+            throw new IllegalStateException("Invalid max installments number");
         }
         if (!paymentPreference.validDefaultInstallments()) {
-            throw new IllegalStateException(getResourcesProvider().getInvalidDefaultInstallmentsErrorMessage());
+            throw new IllegalStateException("Invalid installments number by default");
         }
         if (!paymentPreference.excludedPaymentTypesValid()) {
-            throw new IllegalStateException(getResourcesProvider().getAllPaymentTypesExcludedErrorMessage());
+            throw new IllegalStateException("All payments types excluded");
         }
     }
 
@@ -150,7 +147,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     /* default */ void initPaymentMethodSearch() {
-        getView().setTitle(getResourcesProvider().getTitle());
         showPaymentMethodGroup();
     }
 
@@ -171,7 +167,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
 
     private void resolveAvailablePaymentMethods() {
         if (noPaymentMethodsAvailable()) {
-            showEmptyPaymentMethodsError();
+            getView().showEmptyPaymentMethodsError();
         } else if (isOnlyOneItemAvailable() && !isDiscountAvailable()) {
             if (pluginRepository.hasEnabledPaymentMethodPlugin()) {
                 selectPluginPaymentMethod(pluginRepository.getFirstEnabledPlugin());
@@ -304,7 +300,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         if (skipHook || (!hook1Displayed && !showHook1(selectedPaymentMethod.getPaymentTypeId()))) {
             skipHook = false;
             if (selectedPaymentMethod == null) {
-                showMismatchingPaymentMethodError();
+                getView().showMismatchingPaymentMethodError();
             } else {
                 handleCollectPayerInformation(selectedPaymentMethod);
             }
@@ -355,16 +351,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
             && !pluginRepository.hasEnabledPaymentMethodPlugin();
     }
 
-    private void showEmptyPaymentMethodsError() {
-        final String errorMessage = getResourcesProvider().getEmptyPaymentMethodsErrorMessage();
-        getView().showError(new MercadoPagoError(errorMessage, false), "");
-    }
-
-    private void showMismatchingPaymentMethodError() {
-        final String errorMessage = getResourcesProvider().getStandardErrorMessage();
-        getView().showError(new MercadoPagoError(errorMessage, MISMATCHING_PAYMENT_METHOD_ERROR, false), "");
-    }
-
     public PaymentMethodSearchItem getSelectedSearchItem() {
         return selectedSearchItem;
     }
@@ -406,21 +392,37 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     public void trackScreen() {
-        if (selectedSearchItem == null) {
-            trackInitialScreen();
-        } else {
-            trackChildScreen();
+        // Do not remove check paymentMethodSearch, sometimes in recovery status is null.
+        if(paymentMethodSearch != null) {
+            if (selectedSearchItem == null) {
+                trackInitialScreen();
+            } else {
+                trackChildScreen();
+            }
         }
     }
 
     private void trackInitialScreen() {
-        new SelectMethodView(paymentMethodSearch, mercadoPagoESC.getESCCardIds(),
-            paymentSettingRepository.getCheckoutPreference()).track();
+        final SelectMethodView selectMethodView =
+            new SelectMethodView(paymentMethodSearch, mercadoPagoESC.getESCCardIds(),
+                paymentSettingRepository.getCheckoutPreference());
+        setCurrentViewTracker(selectMethodView);
     }
 
     private void trackChildScreen() {
-        new SelectMethodChildView(paymentMethodSearch, selectedSearchItem,
-            paymentSettingRepository.getCheckoutPreference()).track();
+        final SelectMethodChildView selectMethodChildView =
+            new SelectMethodChildView(paymentMethodSearch, selectedSearchItem,
+                paymentSettingRepository.getCheckoutPreference());
+        setCurrentViewTracker(selectMethodChildView);
+    }
+
+    @Override
+    public void trackOnBackPressed() {
+        if (selectedSearchItem == null) {
+            tracker.trackAbort();
+        } else {
+            tracker.trackBack();
+        }
     }
 
     @Override

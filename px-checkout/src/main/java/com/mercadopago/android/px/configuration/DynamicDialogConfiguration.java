@@ -3,13 +3,15 @@ package com.mercadopago.android.px.configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.core.DynamicDialogCreator;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 // Used by single player to inform charges and other payment special information.
 // Single player usecase depends on amount and payment method.
+// Loyalty shows its own review and confirm with a dialog over ours.
 @SuppressWarnings("unused")
-public final class DynamicDialogConfiguration {
+public final class DynamicDialogConfiguration implements Serializable {
 
     private final Map<DialogLocation, DynamicDialogCreator> creators;
 
@@ -32,11 +34,7 @@ public final class DynamicDialogConfiguration {
 
     public static final class Builder {
 
-        /* default */ Map<DialogLocation, DynamicDialogCreator> creators;
-
-        public Builder() {
-            creators = new HashMap<>();
-        }
+        /* default */ HashMap<DialogLocation, DynamicDialogCreator> creators = new HashMap<>();
 
         /**
          * @param location where dynamic dialog will be placed.

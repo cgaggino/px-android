@@ -31,15 +31,18 @@ public class PaymentData implements Serializable {
         return paymentMethod;
     }
 
+    @Deprecated
     public void setPaymentMethod(final PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
+    @Nullable
     public Issuer getIssuer() {
         return issuer;
     }
 
-    public void setIssuer(final Issuer issuer) {
+    @Deprecated
+    public void setIssuer(@Nullable final Issuer issuer) {
         this.issuer = issuer;
     }
 
@@ -49,7 +52,7 @@ public class PaymentData implements Serializable {
     }
 
     @Deprecated
-    public void setPayerCost(final PayerCost payerCost) {
+    public void setPayerCost(@Nullable final PayerCost payerCost) {
         this.payerCost = payerCost;
     }
 
@@ -63,6 +66,7 @@ public class PaymentData implements Serializable {
         this.token = token;
     }
 
+    @Deprecated
     public void setDiscount(@Nullable final Discount discount) {
         this.discount = discount;
     }
@@ -76,6 +80,7 @@ public class PaymentData implements Serializable {
         return payer;
     }
 
+    @Deprecated
     public void setPayer(final Payer payer) {
         this.payer = payer;
     }
@@ -102,10 +107,12 @@ public class PaymentData implements Serializable {
         return transactionAmount;
     }
 
+    @Deprecated
     public void setTransactionAmount(final BigDecimal transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
 
+    @Deprecated
     public void setCampaign(@Nullable final Campaign campaign) {
         this.campaign = campaign;
     }
@@ -113,5 +120,4 @@ public class PaymentData implements Serializable {
     public boolean containsCardInfo() {
         return getToken() != null && !TextUtil.isEmpty(getToken().getCardId());
     }
-
 }

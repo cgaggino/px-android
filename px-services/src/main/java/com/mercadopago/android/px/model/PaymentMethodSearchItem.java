@@ -1,7 +1,9 @@
 package com.mercadopago.android.px.model;
 
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentMethodSearchItem implements Serializable {
@@ -55,8 +57,9 @@ public class PaymentMethodSearchItem implements Serializable {
         this.comment = comment;
     }
 
+    @NonNull
     public List<PaymentMethodSearchItem> getChildren() {
-        return children;
+        return children == null ? new ArrayList<PaymentMethodSearchItem>() : children;
     }
 
     public void setChildren(List<PaymentMethodSearchItem> children) {

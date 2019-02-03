@@ -1,12 +1,9 @@
 package com.mercadopago.android.px.model;
 
 import android.support.annotation.Keep;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,33 +11,33 @@ import java.util.List;
  * DiscountConfigurationModel}.
  */
 @Keep
-public class AmountConfiguration implements Serializable, Parcelable {
+public final class AmountConfiguration implements Serializable {
 
-    public static final int NO_SELECTED = -1;
+    private static final int NO_SELECTED_PAYER_COST = -1;
 
     /**
      * default selected payer cost configuration for single payment method selection
      */
-    public int selectedPayerCostIndex;
+    private int selectedPayerCostIndex;
 
     /**
      * Payer cost configuration for single payment method selection
      */
-    @NonNull public List<PayerCost> payerCosts;
+    @NonNull private List<PayerCost> payerCosts;
 
     /**
      * Split payment node it it applies.
      */
-    @Nullable public Split split;
+    @Nullable private Split split;
 
-    protected AmountConfiguration(final Parcel in) {
-        selectedPayerCostIndex = in.readInt();
-        payerCosts = in.createTypedArrayList(PayerCost.CREATOR);
-    }
+    /**
+     * The discount token associated with this configuration.
+     */
+    @Nullable private String discountToken;
 
     @NonNull
     public List<PayerCost> getPayerCosts() {
-        return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
+        return payerCosts;
     }
 
     public boolean allowSplit() {
@@ -50,7 +47,7 @@ public class AmountConfiguration implements Serializable, Parcelable {
     @NonNull
     public List<PayerCost> getAppliedPayerCost(final boolean userWantToSplit) {
         if (isSplitPossible(userWantToSplit)) {
-            return split.primaryPaymentMethod.getPayerCosts();
+            return getSplitConfiguration().primaryPaymentMethod.getPayerCosts();
         } else {
             return getPayerCosts();
         }
@@ -59,50 +56,35 @@ public class AmountConfiguration implements Serializable, Parcelable {
     @NonNull
     public PayerCost getCurrentPayerCost(final boolean userWantToSplit, final int userSelectedIndex) {
         if (isSplitPossible(userWantToSplit)) {
-            return PayerCost.getPayerCost(split.primaryPaymentMethod.getPayerCosts(), userSelectedIndex,
-                split.primaryPaymentMethod.selectedPayerCostIndex);
+            return PayerCost
+                .getPayerCost(getSplitConfiguration().primaryPaymentMethod.getPayerCosts(), userSelectedIndex,
+                    getSplitConfiguration().primaryPaymentMethod.selectedPayerCostIndex);
         } else {
             return PayerCost.getPayerCost(getPayerCosts(), userSelectedIndex,
                 selectedPayerCostIndex);
         }
     }
 
-    public boolean isSplitPossible(final boolean userWantToSplit) {
-        return userWantToSplit && allowSplit();
+    @Nullable
+    public Split getSplitConfiguration() {
+        return split;
     }
 
-    public int getDefaultPayerCostIndex() {
-        return selectedPayerCostIndex;
+    @Nullable
+    public String getDiscountToken() {
+        return discountToken;
     }
 
+    @Nullable
     public PayerCost getPayerCost(final int userSelectedPayerCost) {
-        if (userSelectedPayerCost == NO_SELECTED) {
+        if (userSelectedPayerCost == NO_SELECTED_PAYER_COST) {
             return payerCosts.get(selectedPayerCostIndex);
         } else {
             return payerCosts.get(userSelectedPayerCost);
         }
     }
 
-    public static final Creator<AmountConfiguration> CREATOR = new Creator<AmountConfiguration>() {
-        @Override
-        public AmountConfiguration createFromParcel(final Parcel in) {
-            return new AmountConfiguration(in);
-        }
-
-        @Override
-        public AmountConfiguration[] newArray(final int size) {
-            return new AmountConfiguration[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(final Parcel dest, final int flags) {
-        dest.writeInt(selectedPayerCostIndex);
-        dest.writeTypedList(payerCosts);
+    private boolean isSplitPossible(final boolean userWantToSplit) {
+        return userWantToSplit && allowSplit();
     }
 }

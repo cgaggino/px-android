@@ -22,7 +22,7 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
  * Main class of this project. It provides access to most of the checkout experience.
  */
 @SuppressWarnings("unused")
-public class MercadoPagoCheckout {
+public final class MercadoPagoCheckout {
 
     public static final int PAYMENT_RESULT_CODE = 7;
     public static final String EXTRA_PAYMENT_RESULT = "EXTRA_PAYMENT_RESULT";

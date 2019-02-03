@@ -1,8 +1,8 @@
-package com.mercadopago.android.px.model;
+package com.mercadopago.android.px.model.internal;
 
 import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
-import com.mercadopago.android.px.model.commission.ChargeRule;
+import com.mercadopago.android.px.model.commission.PaymentTypeChargeRule;
 import java.util.Collection;
 import java.util.Set;
 
@@ -15,9 +15,9 @@ public class PaymentMethodSearchBody {
     private final String marketplace;
     private final String productId;
     private final Set<String> labels;
-    private final Collection<ChargeRule> charges;
+    private final Collection<PaymentTypeChargeRule> charges;
 
-    public PaymentMethodSearchBody(final Builder builder) {
+    /* default */ PaymentMethodSearchBody(final Builder builder) {
         privateKey = builder.privateKey;
         email = builder.email;
         marketplace = builder.marketplace;
@@ -26,37 +26,13 @@ public class PaymentMethodSearchBody {
         charges = builder.charges;
     }
 
-    public String getPrivateKey() {
-        return privateKey;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getMarketplace() {
-        return marketplace;
-    }
-
-    public String getProductId() {
-        return productId;
-    }
-
-    public Set<String> getLabels() {
-        return labels;
-    }
-
-    public Collection<ChargeRule> getCharges() {
-        return charges;
-    }
-
     public static class Builder {
         /* default */ String privateKey;
         /* default */ String email;
         /* default */ String marketplace;
         /* default */ String productId;
         /* default */ Set<String> labels;
-        /* default */ Collection<ChargeRule> charges;
+        /* default */ Collection<PaymentTypeChargeRule> charges;
 
         public Builder setPrivateKey(@Nullable final String privateKey) {
             this.privateKey = privateKey;
@@ -83,7 +59,7 @@ public class PaymentMethodSearchBody {
             return this;
         }
 
-        public Builder setCharges(@Nullable final Collection<ChargeRule> charges) {
+        public Builder setCharges(@Nullable final Collection<PaymentTypeChargeRule> charges) {
             this.charges = charges;
             return this;
         }

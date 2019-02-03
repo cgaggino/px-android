@@ -6,18 +6,26 @@ android {
 
     testBuildType "release"
 
+
+
     defaultConfig {
         applicationId "com.mercadopago.example"
         minSdkVersion min_api_level as int
         targetSdkVersion api_level as int
         versionCode 1
-        versionName "1.0"
+        versionName version_to_deploy as String
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         // only on development
         if (!project.hasProperty('production')) {
             resConfigs("en", "xxhdpi")
             aaptOptions.cruncherEnabled = false
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     dexOptions {

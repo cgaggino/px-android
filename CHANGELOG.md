@@ -1,3 +1,7 @@
+## VERSION 4.5.2
+_31_01_2019_
+* FIX - NPE tracking events.
+
 ## VERSION 4.6.0
 _24_01_2019_
 * FEATURE - Support to payment method discount.

@@ -6,7 +6,6 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.testcheckout.pages.DiscountDetailPage;
-import javax.annotation.Nonnull;
 import org.hamcrest.Matcher;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -17,7 +16,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class OneShotDiscountValidator extends DiscountValidator {
 
-    public OneShotDiscountValidator(@Nonnull final Campaign campaign, @NonNull final Discount discount) {
+    public OneShotDiscountValidator(@NonNull final Campaign campaign, @NonNull final Discount discount) {
         super(campaign, discount);
     }
 

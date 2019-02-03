@@ -4,15 +4,14 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 
 /**
- * Advanced configuration provides you support for custom checkout functionality/configure special behaviour
- * when checkout is running.
+ * Advanced configuration provides you support for custom checkout functionality/configure special behaviour when
+ * checkout is running.
  */
 @SuppressWarnings("unused")
-public class AdvancedConfiguration implements Serializable {
+public final class AdvancedConfiguration implements Serializable {
 
     /**
-     * Instores usage / money in usage.
-     * use case : not all bank deals apply right now to all preferences.
+     * Instores usage / money in usage. use case : not all bank deals apply right now to all preferences.
      */
     private final boolean bankDealsEnabled;
     private final boolean escEnabled;
@@ -97,9 +96,8 @@ public class AdvancedConfiguration implements Serializable {
             new DiscountParamsConfiguration.Builder().build();
 
         /**
-         * Add the possibility to configure Bank's deals behaviour.
-         * If set as true, then the checkout will try to retrieve bank deals.
-         * If set as false, then the checkout will not try to retrieve bank deals.
+         * Add the possibility to configure Bank's deals behaviour. If set as true, then the checkout will try to
+         * retrieve bank deals. If set as false, then the checkout will not try to retrieve bank deals.
          *
          * @param bankDealsEnabled bool that reflects it's behaviour
          * @return builder to keep operating
@@ -110,8 +108,7 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * Add the possibility to configure ESC behaviour.
-         * If set as true, then saved cards will try to use ESC feature.
+         * Add the possibility to configure ESC behaviour. If set as true, then saved cards will try to use ESC feature.
          * If set as false, then security code will be always asked.
          *
          * @param escEnabled bool that reflects it's behaviour
@@ -123,8 +120,7 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * Enable to preset configurations to customize visualization on the
-         * 'Congrats' screen / 'PaymentResult' screen.
+         * Enable to preset configurations to customize visualization on the 'Congrats' screen / 'PaymentResult' screen.
          * see {@link PaymentResultScreenConfiguration.Builder}
          *
          * @param paymentResultScreenConfiguration your custom preferences.
@@ -137,8 +133,8 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * Enable to preset configurations to customize visualization on
-         * the 'Review and Confirm screen' see {@link ReviewAndConfirmConfiguration.Builder}
+         * Enable to preset configurations to customize visualization on the 'Review and Confirm screen' see {@link
+         * ReviewAndConfirmConfiguration.Builder}
          *
          * @param reviewAndConfirmConfiguration your custom preferences.
          * @return builder to keep operating
@@ -150,8 +146,8 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * Enable to preset configurations to customize dynamic visualization on
-         * several screen locations see {@link DynamicFragmentConfiguration.Builder}
+         * Enable to preset configurations to customize dynamic visualization on several screen locations see {@link
+         * DynamicFragmentConfiguration.Builder}
          *
          * @param dynamicFragmentConfiguration your custom configurations.
          * @return builder to keep operating
@@ -163,8 +159,8 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * Enable to preset configurations to customize dynamic visualization on
-         * several screen locations see {@link DynamicFragmentConfiguration.Builder}
+         * Enable to preset configurations to customize dynamic visualization on several screen locations see {@link
+         * DynamicFragmentConfiguration.Builder}
          *
          * @param dynamicDialogConfiguration your custom configurations.
          * @return builder to keep operating
@@ -176,8 +172,8 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * By default express checkout is disabled. This configuration
-         * allows you to turn on the express behaviour if you have a private key available.
+         * By default express checkout is disabled. This configuration allows you to turn on the express behaviour if
+         * you have a private key available.
          *
          * @param enabled if your checkout supports express mode
          * @return builder to keep operating
@@ -188,8 +184,8 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * Enable to preset configurations to configure specific wordings on
-         * several screen locations see {@link CustomStringConfiguration.Builder}
+         * Enable to preset configurations to configure specific wordings on several screen locations see {@link
+         * CustomStringConfiguration.Builder}
          *
          * @param customStringConfiguration your custom configurations.
          * @return builder to keep operating

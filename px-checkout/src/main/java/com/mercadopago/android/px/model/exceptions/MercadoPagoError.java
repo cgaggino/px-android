@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.model.exceptions;
 
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import java.io.Serializable;
@@ -12,21 +13,37 @@ public class MercadoPagoError implements Serializable {
     private ApiException apiException;
     private final boolean recoverable;
 
-    public MercadoPagoError(final String message, final boolean recoverable) {
+    public MercadoPagoError(@NonNull final String message, final boolean recoverable) {
         this.message = message;
         this.recoverable = recoverable;
     }
 
-    public MercadoPagoError(String message, String detail, boolean recoverable) {
+    public MercadoPagoError(@NonNull final String message, @NonNull final String detail, final boolean recoverable) {
         this.message = message;
         errorDetail = detail;
         this.recoverable = recoverable;
     }
 
-    public MercadoPagoError(ApiException apiException, String requestOrigin) {
+    public MercadoPagoError(@NonNull final ApiException apiException, final String requestOrigin) {
         this.apiException = apiException;
         this.requestOrigin = requestOrigin;
         recoverable = apiException != null && apiException.isRecoverable();
+    }
+
+    @NonNull
+    public static MercadoPagoError createNotRecoverable(@NonNull final String message) {
+        return new MercadoPagoError(message, false);
+    }
+
+    @NonNull
+    public static MercadoPagoError createNotRecoverable(@NonNull final String message, @NonNull final String detail) {
+        return new MercadoPagoError(message, detail, false);
+    }
+
+    @NonNull
+    public static MercadoPagoError createNotRecoverable(@NonNull final ApiException apiException,
+        @NonNull final String requestOrigin) {
+        return new MercadoPagoError(apiException, requestOrigin);
     }
 
     public ApiException getApiException() {

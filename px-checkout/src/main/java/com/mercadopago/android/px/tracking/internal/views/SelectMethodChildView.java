@@ -20,7 +20,7 @@ public class SelectMethodChildView extends ViewTracker {
     public SelectMethodChildView(final PaymentMethodSearch paymentMethodSearch,
         @NonNull final PaymentMethodSearchItem selected, @NonNull final CheckoutPreference preference) {
         parentId = selected.getId();
-        final List<PaymentMethodSearchItem> children = selected.getChildren();
+        List<PaymentMethodSearchItem> children = selected.getChildren();
         data = new SelectMethodData(new FromPaymentMethodSearchItemToAvailableMethod(paymentMethodSearch).map(children),
             new FromItemToItemInfo().map(preference.getItems()), preference.getTotalAmount()).toMap();
     }

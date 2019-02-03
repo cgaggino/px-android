@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.tracking.internal.events;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.tracking.internal.model.ApiErrorData;
@@ -26,11 +27,15 @@ public final class FrictionEventTracker extends EventTracker {
     public static EventTracker with(@NonNull final Id id,
         @NonNull final ViewTracker viewTracker,
         @NonNull final Style style,
-        @NonNull final PaymentMethod paymentMethod) {
+        @Nullable final PaymentMethod paymentMethod) {
 
         final FrictionEventTracker frictionEventTracker =
             new FrictionEventTracker(viewTracker.getViewPath(), id, style);
-        frictionEventTracker.extraInfo.putAll(AvailableMethod.from(paymentMethod).toMap());
+
+        if (paymentMethod != null) {
+            frictionEventTracker.extraInfo.putAll(AvailableMethod.from(paymentMethod).toMap());
+        }
+
         return frictionEventTracker;
     }
 

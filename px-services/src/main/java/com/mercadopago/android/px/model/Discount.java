@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import static com.mercadopago.android.px.internal.util.CurrenciesUtil.isValidCurrency;
+import static com.mercadopago.android.px.internal.util.TextUtil.isEmpty;
 
 /**
  * Model that represents the discount which will be applied to a payment.
@@ -33,6 +34,20 @@ public class Discount implements Serializable, Parcelable {
         name = builder.name;
         percentOff = builder.percentOff;
         amountOff = builder.amountOff;
+    }
+
+    @Nullable
+    public static Discount replaceWith(@Nullable final Discount originalDiscount,
+        @Nullable final String discountToken) {
+        if (originalDiscount != null && !isEmpty(discountToken)) {
+            return new Discount.Builder(discountToken, originalDiscount.getCurrencyId(),
+                originalDiscount.getCouponAmount())
+                .setAmountOff(originalDiscount.getAmountOff())
+                .setPercentOff(originalDiscount.getPercentOff())
+                .setName(originalDiscount.getName()).build();
+        }
+
+        return null;
     }
 
     public BigDecimal getAmountOff() {
