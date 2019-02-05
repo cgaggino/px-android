@@ -1,10 +1,9 @@
 package com.mercadopago.android.px.internal.features;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.base.MvpPresenter;
+import com.mercadopago.android.px.internal.base.BasePresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
-import com.mercadopago.android.px.internal.features.providers.PayerInformationProvider;
 import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
@@ -17,7 +16,7 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PayerInformationPresenter extends MvpPresenter<PayerInformationView, PayerInformationProvider> {
+public class PayerInformationPresenter extends BasePresenter<PayerInformationView> {
 
     @NonNull
     private final PaymentSettingRepository paymentSettings;
@@ -78,9 +77,7 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
 
     private void resolveIdentificationTypes(List<IdentificationType> identificationTypes) {
         if (identificationTypes.isEmpty()) {
-            getView().showError(
-                new MercadoPagoError(getResourcesProvider().getMissingIdentificationTypesErrorMessage(), false),
-                ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES);
+            getView().showMissingIdentificationTypesError();
         } else {
             mIdentificationType = identificationTypes.get(0);
             getView().initializeIdentificationTypes(identificationTypes);
@@ -158,12 +155,11 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
 
     public boolean validateIdentificationNumber() {
         final boolean isIdentificationNumberValid = validateIdentificationNumberLength();
-
         if (isIdentificationNumberValid) {
             getView().clearErrorView();
             getView().clearErrorIdentificationNumber();
         } else {
-            getView().setErrorView(getResourcesProvider().getInvalidIdentificationNumberErrorMessage());
+            getView().setInvalidIdentificationNumberErrorView();
             getView().setErrorIdentificationNumber();
         }
 
@@ -214,7 +210,7 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
             getView().clearErrorView();
             getView().clearErrorName();
         } else {
-            getView().setErrorView(getResourcesProvider().getInvalidIdentificationNameErrorMessage());
+            getView().setInvalidIdentificationNameErrorView();
             getView().setErrorName();
         }
 
@@ -228,7 +224,7 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
             getView().clearErrorView();
             getView().clearErrorLastName();
         } else {
-            getView().setErrorView(getResourcesProvider().getInvalidIdentificationLastNameErrorMessage());
+            getView().setInvalidIdentificationLastNameErrorView();
             getView().setErrorLastName();
         }
 
@@ -243,7 +239,7 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
             //TODO fix when cnpj is available
             getView().clearErrorName();
         } else {
-            getView().setErrorView(getResourcesProvider().getInvalidIdentificationBusinessNameErrorMessage());
+            getView().setInvalidIdentificationBusinessNameErrorView();
             //TODO fix when cnpj is available
             getView().setErrorName();
         }

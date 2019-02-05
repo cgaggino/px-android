@@ -3,7 +3,6 @@ package com.mercadopago.android.px.payerInformation;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.features.PayerInformationPresenter;
 import com.mercadopago.android.px.internal.features.PayerInformationView;
-import com.mercadopago.android.px.internal.features.providers.PayerInformationProvider;
 import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.mocks.IdentificationTypes;

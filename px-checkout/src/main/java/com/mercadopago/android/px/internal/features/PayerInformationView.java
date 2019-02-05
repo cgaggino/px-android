@@ -5,9 +5,6 @@ import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.List;
 
-/**
- * Created by mromar on 29/9/16.
- */
 public interface PayerInformationView extends MvpView {
 
     void initializeIdentificationTypes(List<IdentificationType> identificationTypes);
@@ -37,4 +34,14 @@ public interface PayerInformationView extends MvpView {
     void showProgressBar();
 
     void hideProgressBar();
+
+    void showMissingIdentificationTypesError();
+
+    void setInvalidIdentificationNumberErrorView();
+
+    void setInvalidIdentificationNameErrorView();
+
+    void setInvalidIdentificationLastNameErrorView();
+
+    void setInvalidIdentificationBusinessNameErrorView();
 }
