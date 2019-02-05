@@ -6,6 +6,7 @@ import com.mercadopago.android.px.internal.features.PayerInformationView;
 import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.mocks.IdentificationTypes;
+import com.mercadopago.android.px.mocks.Identifications;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.exceptions.ApiException;
@@ -19,8 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static junit.framework.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PayerInformationPresenterTest {
 
+    public static final String DUMMY_NAME = "Name";
     @Mock private PaymentSettingRepository paymentSettingRepository;
     @Mock private IdentificationRepository identificationRepository;
 
@@ -90,259 +90,71 @@ public class PayerInformationPresenterTest {
     }
 
     @Test
-    public void clearErrorNameWhenNameIsValid() {
-        MockedView mockedView = new MockedView();
-        MockedProvider provider = new MockedProvider();
+    public void whenNameIsValidThenClearError() {
+        presenter.setIdentificationName(DUMMY_NAME);
+        presenter.checkIsEmptyOrValidName();
 
-        List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
-        provider.setIdentificationTypesResponse(identificationTypesList);
-
-        PayerInformationPresenter presenter = new PayerInformationPresenter(
-            paymentSettingRepository, identificationRepository);
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(provider);
-
-        presenter.setIdentificationName("Name");
-
-        assertTrue(presenter.validateName());
-        assertTrue(mockedView.clearErrorName);
-        assertTrue(mockedView.clearErrorView);
+        verify(view).clearErrorView();
+        verify(view).clearErrorName();
+        verifyNoMoreInteractions(view);
     }
 
     @Test
-    public void setErrorViewWhenNameIsNotValid() {
-        MockedView mockedView = new MockedView();
-        MockedProvider provider = new MockedProvider();
+    public void whenNameIsNotValidThenSetErrorView() {
+        presenter.validateName();
 
-        List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
-        provider.setIdentificationTypesResponse(identificationTypesList);
-
-        PayerInformationPresenter presenter = new PayerInformationPresenter(
-            paymentSettingRepository, identificationRepository);
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(provider);
-
-        presenter.setIdentificationName("");
-
-        assertFalse(presenter.validateName());
-        assertTrue(mockedView.setErrorName);
-        assertTrue(mockedView.setErrorView);
+        verify(view).setInvalidIdentificationNameErrorView();
+        verify(view).setErrorName();
+        verifyNoMoreInteractions(view);
     }
 
     @Test
-    public void setErrorViewWhenNumberIsNotValid() {
-        MockedView mockedView = new MockedView();
-        MockedProvider provider = new MockedProvider();
+    public void whenLastNameIsValidThenClearError() {
+        presenter.setIdentificationLastName(DUMMY_NAME);
+        presenter.checkIsEmptyOrValidLastName();
 
-        List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
-        provider.setIdentificationTypesResponse(identificationTypesList);
+        verify(view).clearErrorView();
+        verify(view).clearErrorLastName();
+        verifyNoMoreInteractions(view);
+    }
 
-        IdentificationType identificationType = getIdentificationTypeCPF();
-        Identification identification = getIdentificationWithWrongNumberCPF();
+    @Test
+    public void whenLastNameIsNotValidThenSetErrorView() {
+        presenter.validateLastName();
 
-        PayerInformationPresenter presenter = new PayerInformationPresenter(
-            paymentSettingRepository, identificationRepository);
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(provider);
+        verify(view).setInvalidIdentificationLastNameErrorView();
+        verify(view).setErrorLastName();
+        verifyNoMoreInteractions(view);
+    }
+
+    @Test
+    public void whenNumberIsNotValidThenSetErrorView() {
+        final IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
+        final Identification identification = Identifications.getIdentificationWithWrongNumberCPF();
+
         presenter.setIdentificationType(identificationType);
         presenter.setIdentification(identification);
 
-        assertFalse(presenter.validateIdentificationNumber());
-        assertTrue(mockedView.setErrorIdentificationNumber);
-        assertTrue(mockedView.setErrorView);
+        presenter.validateIdentificationNumber();
+
+        verify(view).setInvalidIdentificationNumberErrorView();
+        verify(view).setErrorIdentificationNumber();
+        verifyNoMoreInteractions(view);
     }
 
     @Test
-    public void clearErrorNumberWhenNumberIsValid() {
-        MockedView mockedView = new MockedView();
-        MockedProvider provider = new MockedProvider();
+    public void whenNumberIsValidThenClearError() {
+        IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
+        Identification identification = Identifications.getIdentificationCPF();
 
-        List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
-        provider.setIdentificationTypesResponse(identificationTypesList);
-
-        IdentificationType identificationType = getIdentificationTypeCPF();
-        Identification identification = getIdentificationCPF();
-
-        PayerInformationPresenter presenter = new PayerInformationPresenter(
-            paymentSettingRepository, identificationRepository);
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(provider);
         presenter.setIdentificationType(identificationType);
         presenter.setIdentification(identification);
 
-        assertTrue(presenter.validateIdentificationNumber());
-        assertTrue(mockedView.clearErrorIdentificationNumber);
-        assertTrue(mockedView.clearErrorView);
+        presenter.validateIdentificationNumber();
+
+        verify(view).clearErrorView();
+        verify(view).clearErrorIdentificationNumber();
+        verifyNoMoreInteractions(view);
     }
 
-    private Identification getIdentificationCPF() {
-        String type = "CPF";
-        String identificationNumber = "89898989898";
-
-        Identification identification = new Identification();
-        identification.setNumber(identificationNumber);
-        identification.setType(type);
-
-        return identification;
-    }
-
-    private Identification getIdentificationWithWrongNumberCPF() {
-        String type = "CPF";
-        String identificationNumber = "";
-
-        Identification identification = new Identification();
-        identification.setNumber(identificationNumber);
-        identification.setType(type);
-
-        return identification;
-    }
-
-    private IdentificationType getIdentificationTypeCPF() {
-        String type = "number";
-        String id = "CPF";
-        String name = "CPF";
-
-        IdentificationType identificationType = new IdentificationType();
-        identificationType.setType(type);
-        identificationType.setId(id);
-        identificationType.setMaxLength(11);
-        identificationType.setMinLength(11);
-        identificationType.setName(name);
-
-        return identificationType;
-    }
-
-    private class MockedView implements PayerInformationView {
-
-        private boolean initializeIdentificationTypes;
-        private boolean showError;
-        private boolean clearErrorView;
-        private boolean clearErrorName;
-        private boolean setErrorName;
-        private boolean setErrorView;
-        private boolean clearErrorIdentificationNumber;
-        private boolean setErrorIdentificationNumber;
-        private String errorMessage;
-
-        private MercadoPagoError mercadoPagoError;
-
-        @Override
-        public void initializeIdentificationTypes(List<IdentificationType> identificationTypes) {
-            this.initializeIdentificationTypes = true;
-        }
-
-        @Override
-        public void setIdentificationNumberRestrictions(String type) {
-            //Add test
-        }
-
-        @Override
-        public void clearErrorIdentificationNumber() {
-            this.clearErrorIdentificationNumber = true;
-        }
-
-        @Override
-        public void clearErrorName() {
-            this.clearErrorName = true;
-        }
-
-        @Override
-        public void clearErrorLastName() {
-            //Add test
-        }
-
-        @Override
-        public void setErrorIdentificationNumber() {
-            this.setErrorIdentificationNumber = true;
-        }
-
-        @Override
-        public void setErrorName() {
-            this.setErrorName = true;
-        }
-
-        @Override
-        public void setErrorLastName() {
-            //Add test
-        }
-
-        @Override
-        public void setErrorView(String message) {
-            this.errorMessage = message;
-            this.setErrorView = true;
-        }
-
-        @Override
-        public void clearErrorView() {
-            this.clearErrorView = true;
-        }
-
-        @Override
-        public void showInputContainer() {
-            //Add test
-        }
-
-        @Override
-        public void showError(MercadoPagoError error, String requestOrigin) {
-            this.mercadoPagoError = error;
-            this.showError = true;
-        }
-
-        @Override
-        public void showProgressBar() {
-            //Add test
-        }
-
-        @Override
-        public void hideProgressBar() {
-            //Add test
-        }
-    }
-
-    private class MockedProvider implements PayerInformationProvider {
-
-        private boolean shouldFail;
-        private MercadoPagoError failedResponse;
-        private List<IdentificationType> successfulIdentificationTypesResponse;
-
-        @Override
-        public String getInvalidIdentificationNumberErrorMessage() {
-            return null;
-        }
-
-        @Override
-        public String getInvalidIdentificationNameErrorMessage() {
-            return null;
-        }
-
-        @Override
-        public String getInvalidIdentificationLastNameErrorMessage() {
-            return null;
-        }
-
-        @Override
-        public String getInvalidIdentificationBusinessNameErrorMessage() {
-            return null;
-        }
-
-        @Override
-        public String getMissingPublicKeyErrorMessage() {
-            return null;
-        }
-
-        @Override
-        public String getMissingIdentificationTypesErrorMessage() {
-            return null;
-        }
-
-        public void setIdentificationTypesResponse(List<IdentificationType> identificationTypes) {
-            shouldFail = false;
-            successfulIdentificationTypesResponse = identificationTypes;
-        }
-
-        public void setIdentificationTypesResponse(MercadoPagoError exception) {
-            shouldFail = true;
-            failedResponse = exception;
-        }
-    }
 }

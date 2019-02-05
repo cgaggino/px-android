@@ -55,4 +55,19 @@ public class IdentificationTypes {
         }
         return identificationTypesList;
     }
+
+    public static IdentificationType getIdentificationTypeCPF() {
+        String type = "number";
+        String id = "CPF";
+        String name = "CPF";
+
+        IdentificationType identificationType = new IdentificationType();
+        identificationType.setType(type);
+        identificationType.setId(id);
+        identificationType.setMaxLength(11);
+        identificationType.setMinLength(11);
+        identificationType.setName(name);
+
+        return identificationType;
+    }
 }

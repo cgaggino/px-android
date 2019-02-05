@@ -149,7 +149,6 @@
     <string name="px_error_title">Oops! Something went wrong</string>
     <string name="px_standard_error_message">We are going to fix it. Try later.</string>
     <string name="px_error_message_email_required">Email is required</string>
-    <string name="px_error_message_missing_public_key">Public key is required</string>
     <string name="px_error_message_missing_payer_cost">No installments found</string>
     <string name="px_error_message_missing_identification_types">No identification type found</string>
     <string name="px_error_message_missing_setting_for_bin">No setting found for that bin</string>
