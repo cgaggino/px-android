@@ -13,10 +13,13 @@ import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.tracking.internal.views.CPFViewTracker;
+import com.mercadopago.android.px.tracking.internal.views.LastNameViewTracker;
+import com.mercadopago.android.px.tracking.internal.views.NameViewTracker;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PayerInformationPresenter extends BasePresenter<PayerInformationView> {
+public class PayerInformationPresenter extends BasePresenter<PayerInformationView> implements PayerInformation.Actions {
 
     @NonNull
     private final PaymentSettingRepository paymentSettings;
@@ -297,5 +300,33 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
 
     public void setIdentificationTypesList(List<IdentificationType> mIdentificationTypes) {
         this.mIdentificationTypes = mIdentificationTypes;
+    }
+
+    @Override
+    public void trackIdentificationNumberView() {
+        final CPFViewTracker cpfViewTracker = new CPFViewTracker();
+        setCurrentViewTracker(cpfViewTracker);
+    }
+
+    @Override
+    public void trackIdentificationNameView() {
+        final NameViewTracker nameViewTracker = new NameViewTracker();
+        setCurrentViewTracker(nameViewTracker);
+    }
+
+    @Override
+    public void trackIdentificationLastNameView() {
+        final LastNameViewTracker lastNameViewTracker = new LastNameViewTracker();
+        setCurrentViewTracker(lastNameViewTracker);
+    }
+
+    @Override
+    public void trackAbort() {
+        tracker.trackAbort();
+    }
+
+    @Override
+    public void trackBack() {
+        tracker.trackBack();
     }
 }

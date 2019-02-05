@@ -41,9 +41,6 @@ import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.tracking.internal.views.CPFViewTracker;
-import com.mercadopago.android.px.tracking.internal.views.LastNameViewTracker;
-import com.mercadopago.android.px.tracking.internal.views.NameViewTracker;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -183,8 +180,7 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setResult(RESULT_CANCELED, new Intent());
-                    finish();
+                    onBackPressed();
                 }
             });
         }
@@ -505,8 +501,9 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                presenter.trackBack();
                 if (mCurrentEditingEditText.equals(IDENTIFICATION_NUMBER_INPUT)) {
-                    onBackPressed();
+                    onBackButtonPressed();
                 } else {
                     checkIsEmptyOrValid();
                 }
@@ -514,9 +511,15 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
         });
     }
 
+    private void onBackButtonPressed() {
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
-        setResult(RESULT_CANCELED);
+        presenter.trackAbort();
+        setResult(RESULT_CANCELED, new Intent());
         finish();
     }
 
@@ -662,19 +665,19 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
     }
 
     private void requestIdentificationNumberFocus() {
-        new CPFViewTracker().track();
+        presenter.trackIdentificationNumberView();
         mCurrentEditingEditText = IDENTIFICATION_NUMBER_INPUT;
         openKeyboard(mIdentificationNumberEditText);
     }
 
     private void requestIdentificationNameFocus() {
-        new NameViewTracker().track();
+        presenter.trackIdentificationNameView();
         mCurrentEditingEditText = IDENTIFICATION_NAME_INPUT;
         openKeyboard(mIdentificationNameEditText);
     }
 
     private void requestIdentificationLastNameFocus() {
-        new LastNameViewTracker().track();
+        presenter.trackIdentificationLastNameView();
         mCurrentEditingEditText = IDENTIFICATION_LAST_NAME_INPUT;
         openKeyboard(mIdentificationLastNameEditText);
     }
