@@ -77,7 +77,7 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
         final int yFirstViewEnd = firstView.getTop() + firstView.getHeight();
         final int ySecondViewInit = secondView.getTop();
 
-        return yFirstViewEnd > ySecondViewInit;
+        return yFirstViewEnd >= ySecondViewInit;
     }
 
     public void animateElementList(final float positionOffset) {
