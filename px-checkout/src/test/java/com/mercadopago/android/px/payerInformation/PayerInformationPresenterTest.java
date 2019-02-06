@@ -7,7 +7,7 @@ import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.viewmodel.PayerInformationStateModel;
 import com.mercadopago.android.px.mocks.IdentificationTypes;
-import com.mercadopago.android.px.mocks.Identifications;
+import com.mercadopago.android.px.mocks.IdentificationUtils;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.exceptions.ApiException;
@@ -132,7 +132,7 @@ public class PayerInformationPresenterTest {
     @Test
     public void whenNumberIsNotValidThenSetErrorView() {
         final IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
-        final Identification identification = Identifications.getIdentificationWithWrongNumberCPF();
+        final Identification identification = IdentificationUtils.getIdentificationWithWrongNumberCPF();
 
         presenter.getState().identificationType = identificationType;
         presenter.getState().identification = identification;
@@ -147,7 +147,7 @@ public class PayerInformationPresenterTest {
     @Test
     public void whenNumberIsValidThenClearError() {
         IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
-        Identification identification = Identifications.getIdentificationCPF();
+        Identification identification = IdentificationUtils.getIdentificationCPF();
 
         presenter.getState().identificationType = identificationType;
         presenter.getState().identification = identification;
