@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.IdentificationTypesAdapter;
 import com.mercadopago.android.px.internal.base.PXActivity;
@@ -32,27 +31,17 @@ import com.mercadopago.android.px.internal.features.card.TicketIdentificationNum
 import com.mercadopago.android.px.internal.features.uicontrollers.identification.IdentificationTicketView;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
-import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.MPEditText;
 import com.mercadopago.android.px.internal.view.MPTextView;
-import com.mercadopago.android.px.model.Identification;
+import com.mercadopago.android.px.internal.viewmodel.PayerInformationStateModel;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PayerInformationActivity extends PXActivity<PayerInformationPresenter> implements PayerInformationView {
-
-    public static final String IDENTIFICATION_NUMBER_BUNDLE = "mIdentificationNumber";
-    public static final String IDENTIFICATION_NAME_BUNDLE = "mIdentificationName";
-    public static final String IDENTIFICATION_LAST_NAME_BUNDLE = "mIdentificationLastName";
-    public static final String IDENTIFICATION_BUNDLE = "mIdentification";
-    public static final String IDENTIFICATION_TYPE_BUNDLE = "mIdentificationType";
-    public static final String IDENTIFICATION_TYPES_LIST_BUNDLE = "mIdentificationTypesList";
 
     public static final String IDENTIFICATION_NUMBER_INPUT = "identificationNumber";
     public static final String IDENTIFICATION_NAME_INPUT = "identificationName";
@@ -106,28 +95,24 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivityActive = true;
-
-        createPresenter();
         analyzeLowRes();
-        configurePresenter();
         setContentView();
         initializeControls();
         initializeToolbar();
-        setListeners();
-        initialize();
+        if (savedInstanceState == null) {
+            createPresenter(new PayerInformationStateModel());
+            setListeners();
+        }
+        mErrorState = NORMAL_STATE;
     }
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(IDENTIFICATION_NUMBER_BUNDLE, presenter.getIdentificationNumber());
-        outState.putString(IDENTIFICATION_NAME_BUNDLE, presenter.getIdentificationName());
-        outState.putString(IDENTIFICATION_LAST_NAME_BUNDLE, presenter.getIdentificationLastName());
-        outState.putString(IDENTIFICATION_BUNDLE, JsonUtil.getInstance().toJson(presenter.getIdentification()));
-        outState
-            .putString(IDENTIFICATION_TYPE_BUNDLE, JsonUtil.getInstance().toJson(presenter.getIdentificationType()));
-        outState.putString(IDENTIFICATION_TYPES_LIST_BUNDLE,
-            JsonUtil.getInstance().toJson(presenter.getIdentificationTypes()));
+        if (presenter != null) {
+            final PayerInformationStateModel state = presenter.getState();
+            state.toBundle(outState);
+        }
     }
 
     @Override
@@ -135,30 +120,17 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
         super.onRestoreInstanceState(savedInstanceState);
 
         if (savedInstanceState != null) {
-            final String identificationNumber = savedInstanceState.getString(IDENTIFICATION_NUMBER_BUNDLE);
-            final String identificationName = savedInstanceState.getString(IDENTIFICATION_NAME_BUNDLE);
-            final String identificationLastName = savedInstanceState.getString(IDENTIFICATION_LAST_NAME_BUNDLE);
-            final Identification identification = JsonUtil.getInstance()
-                .fromJson(savedInstanceState.getString(IDENTIFICATION_BUNDLE), Identification.class);
-            final IdentificationType identificationType = JsonUtil.getInstance()
-                .fromJson(savedInstanceState.getString(IDENTIFICATION_TYPE_BUNDLE), IdentificationType.class);
-            List<IdentificationType> identificationTypesList;
-            try {
-                Type listType = new TypeToken<List<IdentificationType>>() {
-                }.getType();
-                identificationTypesList = JsonUtil.getInstance().getGson().fromJson(
-                    savedInstanceState.getString(IDENTIFICATION_TYPES_LIST_BUNDLE), listType);
-            } catch (Exception ex) {
-                identificationTypesList = new ArrayList<>();
-            }
-
-            presenter.setIdentificationNumber(identificationNumber);
-            presenter.setIdentificationName(identificationName);
-            presenter.setIdentificationLastName(identificationLastName);
-            presenter.setIdentification(identification);
-            presenter.setIdentificationType(identificationType);
-            presenter.setIdentificationTypesList(identificationTypesList);
+            createPresenter(PayerInformationStateModel.fromBundle(savedInstanceState));
+            setListeners();
+            restoreIdentificationTicketView();
         }
+    }
+
+    private void restoreIdentificationTicketView() {
+        mIdentificationTicketView.setIdentificationLastName(presenter.getState().identificationLastName);
+        mIdentificationTicketView.setIdentificationName(presenter.getState().identificationName);
+        mIdentificationTicketView.setIdentificationNumber(presenter.getState().identificationNumber);
+        mIdentificationTicketView.draw();
     }
 
     private void initializeToolbar() {
@@ -190,15 +162,14 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
         mLowResActive = ScaleUtil.isLowRes(this);
     }
 
-    private void createPresenter() {
+    private void createPresenter(final PayerInformationStateModel stateModel) {
         final Session session = Session.getSession(this);
         presenter =
-            new PayerInformationPresenter(session.getConfigurationModule().getPaymentSettings(),
+            new PayerInformationPresenter(stateModel,
+                session.getConfigurationModule().getPaymentSettings(),
                 session.getIdentificationRepository());
-    }
-
-    private void configurePresenter() {
         presenter.attachView(this);
+        presenter.initialize();
     }
 
     private void setContentView() {
@@ -318,6 +289,7 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
     }
 
     private void setIdentificationNumberEditTextListeners() {
+
         mIdentificationNumberEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -523,11 +495,6 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
         finish();
     }
 
-    private void initialize() {
-        mErrorState = NORMAL_STATE;
-        presenter.initialize();
-    }
-
     @Override
     public void showInputContainer() {
         requestIdentificationNumberFocus();
@@ -599,7 +566,7 @@ public class PayerInformationActivity extends PXActivity<PayerInformationPresent
 
                 mIdentificationTicketView.setNormalColorNameText();
 
-                if (presenter.getIdentificationType().getId().equals(IDENTIFICATION_TYPE_CNPJ)) {
+                if (presenter.getState().identificationType.getId().equals(IDENTIFICATION_TYPE_CNPJ)) {
                     requestIdentificationBusinessNameFocus();
                 } else {
                     requestIdentificationNameFocus();

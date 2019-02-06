@@ -5,6 +5,7 @@ import com.mercadopago.android.px.internal.features.PayerInformationPresenter;
 import com.mercadopago.android.px.internal.features.PayerInformationView;
 import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.viewmodel.PayerInformationStateModel;
 import com.mercadopago.android.px.mocks.IdentificationTypes;
 import com.mercadopago.android.px.mocks.Identifications;
 import com.mercadopago.android.px.model.Identification;
@@ -35,6 +36,7 @@ public class PayerInformationPresenterTest {
     @Mock private IdentificationRepository identificationRepository;
 
     @Mock private PayerInformationView view;
+    @Mock private PayerInformationStateModel stateModel;
 
     private PayerInformationPresenter presenter;
 
@@ -48,7 +50,7 @@ public class PayerInformationPresenterTest {
         final PayerInformationView view) {
 
         PayerInformationPresenter presenter = new PayerInformationPresenter(
-            paymentSettingRepository, identificationRepository);
+            stateModel, paymentSettingRepository, identificationRepository);
 
         presenter.attachView(view);
         return presenter;
@@ -80,7 +82,7 @@ public class PayerInformationPresenterTest {
         final ApiException apiException = mock(ApiException.class);
 
         when(identificationRepository.getIdentificationTypes())
-            .thenReturn(new StubFailMpCall<List<IdentificationType>>(apiException));
+            .thenReturn(new StubFailMpCall<>(apiException));
 
         presenter.initialize();
 
@@ -91,7 +93,7 @@ public class PayerInformationPresenterTest {
 
     @Test
     public void whenNameIsValidThenClearError() {
-        presenter.setIdentificationName(DUMMY_NAME);
+        presenter.getState().identificationName = DUMMY_NAME;
         presenter.checkIsEmptyOrValidName();
 
         verify(view).clearErrorView();
@@ -110,7 +112,7 @@ public class PayerInformationPresenterTest {
 
     @Test
     public void whenLastNameIsValidThenClearError() {
-        presenter.setIdentificationLastName(DUMMY_NAME);
+        presenter.getState().identificationLastName = DUMMY_NAME;
         presenter.checkIsEmptyOrValidLastName();
 
         verify(view).clearErrorView();
@@ -132,8 +134,8 @@ public class PayerInformationPresenterTest {
         final IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
         final Identification identification = Identifications.getIdentificationWithWrongNumberCPF();
 
-        presenter.setIdentificationType(identificationType);
-        presenter.setIdentification(identification);
+        presenter.getState().identificationType = identificationType;
+        presenter.getState().identification = identification;
 
         presenter.validateIdentificationNumber();
 
@@ -147,8 +149,8 @@ public class PayerInformationPresenterTest {
         IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
         Identification identification = Identifications.getIdentificationCPF();
 
-        presenter.setIdentificationType(identificationType);
-        presenter.setIdentification(identification);
+        presenter.getState().identificationType = identificationType;
+        presenter.getState().identification = identification;
 
         presenter.validateIdentificationNumber();
 
@@ -156,5 +158,4 @@ public class PayerInformationPresenterTest {
         verify(view).clearErrorIdentificationNumber();
         verifyNoMoreInteractions(view);
     }
-
 }

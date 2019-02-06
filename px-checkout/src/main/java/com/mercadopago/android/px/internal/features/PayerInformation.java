@@ -1,5 +1,7 @@
 package com.mercadopago.android.px.internal.features;
 
+import com.mercadopago.android.px.internal.viewmodel.PayerInformationStateModel;
+
 public interface PayerInformation {
 
     interface Actions {
@@ -12,5 +14,7 @@ public interface PayerInformation {
         void trackAbort();
 
         void trackBack();
+
+        PayerInformationStateModel getState();
     }
 }

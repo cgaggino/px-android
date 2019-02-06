@@ -8,6 +8,7 @@ import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.internal.viewmodel.PayerInformationStateModel;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Payer;
@@ -21,30 +22,30 @@ import java.util.List;
 
 public class PayerInformationPresenter extends BasePresenter<PayerInformationView> implements PayerInformation.Actions {
 
+    @NonNull /* default */ final PayerInformationStateModel state;
     @NonNull
     private final PaymentSettingRepository paymentSettings;
     @NonNull
     private final IdentificationRepository identificationRepository;
 
     //Payer info
-    private String mIdentificationNumber;
-    private String mIdentificationName;
-    private String mIdentificationLastName;
     private String mIdentificationBusinessName;
-    private Identification mIdentification;
-    private IdentificationType mIdentificationType;
-    private List<IdentificationType> mIdentificationTypes;
 
     private FailureRecovery mFailureRecovery;
 
     private static final int DEFAULT_IDENTIFICATION_NUMBER_LENGTH = 12;
     private static final String IDENTIFICATION_TYPE_CPF = "CPF";
 
-    public PayerInformationPresenter(@NonNull final PaymentSettingRepository paymentSettings,
+    public PayerInformationPresenter(
+        @NonNull final PayerInformationStateModel state,
+        @NonNull final PaymentSettingRepository paymentSettings,
         @NonNull final IdentificationRepository identificationRepository) {
+        this.state = state;
         this.paymentSettings = paymentSettings;
         this.identificationRepository = identificationRepository;
-        mIdentification = new Identification();
+        if (state.identification == null) {
+            state.identification = new Identification();
+        }
     }
 
     public void initialize() {
@@ -82,9 +83,9 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
         if (identificationTypes.isEmpty()) {
             getView().showMissingIdentificationTypesError();
         } else {
-            mIdentificationType = identificationTypes.get(0);
+            state.identificationType = identificationTypes.get(0);
             getView().initializeIdentificationTypes(identificationTypes);
-            mIdentificationTypes = getCPFIdentificationTypes(identificationTypes);
+            state.identificationTypeList = getCPFIdentificationTypes(identificationTypes);
         }
     }
 
@@ -101,31 +102,31 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
     }
 
     public void saveIdentificationNumber(final String identificationNumber) {
-        mIdentificationNumber = identificationNumber;
-        mIdentification.setNumber(identificationNumber);
+        state.identificationNumber = identificationNumber;
+        state.identification.setNumber(identificationNumber);
     }
 
     public void saveIdentificationName(final String identificationName) {
-        mIdentificationName = identificationName;
+        state.identificationName = identificationName;
     }
 
     public void saveIdentificationLastName(final String identificationLastName) {
-        mIdentificationLastName = identificationLastName;
+        state.identificationLastName = identificationLastName;
     }
 
     public int getIdentificationNumberMaxLength() {
         int maxLength = DEFAULT_IDENTIFICATION_NUMBER_LENGTH;
 
-        if (mIdentificationType != null) {
-            maxLength = mIdentificationType.getMaxLength();
+        if (state.identificationType != null) {
+            maxLength = state.identificationType.getMaxLength();
         }
         return maxLength;
     }
 
     public void saveIdentificationType(final IdentificationType identificationType) {
-        mIdentificationType = identificationType;
+        state.identificationType = identificationType;
         if (identificationType != null) {
-            mIdentification.setType(identificationType.getId());
+            state.identification.setType(identificationType.getId());
             getView().setIdentificationNumberRestrictions(identificationType.getType());
         }
     }
@@ -135,9 +136,9 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
         final CheckoutPreference checkoutPreference = paymentSettings.getCheckoutPreference();
         final Payer payer = checkoutPreference.getPayer();
         // add collected information.
-        payer.setFirstName(mIdentificationName);
-        payer.setLastName(mIdentificationLastName);
-        payer.setIdentification(mIdentification);
+        payer.setFirstName(state.identificationName);
+        payer.setLastName(state.identificationLastName);
+        payer.setIdentification(state.identification);
         // reconfigure
         paymentSettings.configure(checkoutPreference);
     }
@@ -170,12 +171,12 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
     }
 
     private boolean validateIdentificationNumberLength() {
-        if (mIdentificationType != null) {
-            if ((mIdentification != null) &&
-                (mIdentification.getNumber() != null)) {
-                final int len = mIdentification.getNumber().length();
-                final Integer min = mIdentificationType.getMinLength();
-                final Integer max = mIdentificationType.getMaxLength();
+        if (state.identificationType != null) {
+            if ((state.identification != null) &&
+                (state.identification.getNumber() != null)) {
+                final int len = state.identification.getNumber().length();
+                final Integer min = state.identificationType.getMinLength();
+                final Integer max = state.identificationType.getMaxLength();
                 if ((min != null) && (max != null)) {
                     return ((len <= max) && (len >= min));
                 } else {
@@ -190,24 +191,24 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
     }
 
     private boolean validateNumber() {
-        return mIdentification != null && validateIdentificationType() &&
-            !TextUtil.isEmpty(mIdentification.getNumber());
+        return state.identification != null && validateIdentificationType() &&
+            !TextUtil.isEmpty(state.identification.getNumber());
     }
 
     private boolean validateIdentificationType() {
-        return mIdentification != null && !TextUtil.isEmpty(mIdentification.getType());
+        return state.identification != null && !TextUtil.isEmpty(state.identification.getType());
     }
 
     public boolean checkIsEmptyOrValidName() {
-        return TextUtil.isEmpty(mIdentificationName) || validateName();
+        return TextUtil.isEmpty(state.identificationName) || validateName();
     }
 
     public boolean checkIsEmptyOrValidLastName() {
-        return TextUtil.isEmpty(mIdentificationLastName) || validateLastName();
+        return TextUtil.isEmpty(state.identificationLastName) || validateLastName();
     }
 
     public boolean validateName() {
-        final boolean isNameValid = validateString(mIdentificationName);
+        final boolean isNameValid = validateString(state.identificationName);
 
         if (isNameValid) {
             getView().clearErrorView();
@@ -221,7 +222,7 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
     }
 
     public boolean validateLastName() {
-        final boolean isLastNameValid = validateString(mIdentificationLastName);
+        final boolean isLastNameValid = validateString(state.identificationLastName);
 
         if (isLastNameValid) {
             getView().clearErrorView();
@@ -254,54 +255,6 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
         return !TextUtil.isEmpty(string);
     }
 
-    public IdentificationType getIdentificationType() {
-        return mIdentificationType;
-    }
-
-    public String getIdentificationNumber() {
-        return mIdentificationNumber;
-    }
-
-    public String getIdentificationName() {
-        return mIdentificationName;
-    }
-
-    public String getIdentificationLastName() {
-        return mIdentificationLastName;
-    }
-
-    public Identification getIdentification() {
-        return mIdentification;
-    }
-
-    public List<IdentificationType> getIdentificationTypes() {
-        return mIdentificationTypes;
-    }
-
-    public void setIdentificationType(IdentificationType mIdentificationType) {
-        this.mIdentificationType = mIdentificationType;
-    }
-
-    public void setIdentificationNumber(String mIdentificationNumber) {
-        this.mIdentificationNumber = mIdentificationNumber;
-    }
-
-    public void setIdentificationName(String mIdentificationName) {
-        this.mIdentificationName = mIdentificationName;
-    }
-
-    public void setIdentificationLastName(String mIdentificationLastName) {
-        this.mIdentificationLastName = mIdentificationLastName;
-    }
-
-    public void setIdentification(Identification mIdentification) {
-        this.mIdentification = mIdentification;
-    }
-
-    public void setIdentificationTypesList(List<IdentificationType> mIdentificationTypes) {
-        this.mIdentificationTypes = mIdentificationTypes;
-    }
-
     @Override
     public void trackIdentificationNumberView() {
         final CPFViewTracker cpfViewTracker = new CPFViewTracker();
@@ -328,5 +281,11 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
     @Override
     public void trackBack() {
         tracker.trackBack();
+    }
+
+    @NonNull
+    @Override
+    public PayerInformationStateModel getState() {
+        return state;
     }
 }
