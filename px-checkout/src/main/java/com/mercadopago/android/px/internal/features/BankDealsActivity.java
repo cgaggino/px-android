@@ -2,91 +2,71 @@ package com.mercadopago.android.px.internal.features;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.BankDealsAdapter;
-import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
-import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.repository.BankDealsRepository;
-import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
-import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.tracking.internal.views.BankDealsViewTracker;
-import java.lang.reflect.Type;
 import java.util.List;
 
-public class BankDealsActivity extends MercadoPagoActivity implements OnSelectedCallback<BankDeal> {
+public class BankDealsActivity extends PXActivity<BankDealsPresenter>
+    implements BankDealsView {
 
-    // Local vars
-    protected MercadoPagoServicesAdapter mMercadoPago;
-    protected RecyclerView mRecyclerView;
-    protected Toolbar mToolbar;
-
-    protected List<BankDeal> mBankDeals;
+    protected RecyclerView bankDealsRecyclerView;
+    protected Toolbar toolbar;
+    private BankDealsAdapter bankDealsAdapter;
 
     @Override
-    protected void onValidStart() {
-        new BankDealsViewTracker().track();
-        final Session session = Session.getSession(this);
-        final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
-        mMercadoPago = new MercadoPagoServicesAdapter(getActivity(), paymentSettings.getPublicKey(),
-            paymentSettings.getPrivateKey());
-        getBankDeals();
-    }
-
-    @Override
-    protected void onInvalidStart(String message) {
-        ErrorUtil.startErrorActivity(this, message, false);
-    }
-
-    @Override
-    protected void setContentView() {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.px_activity_bank_deals);
-    }
-
-    @Override
-    protected void initializeControls() {
-        initializeToolbar();
-        mRecyclerView = findViewById(R.id.mpsdkBankDealsList);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-    }
-
-    @Override
-    protected void getActivityParameters() {
         try {
-            Type listType = new TypeToken<List<BankDeal>>() {
-            }.getType();
-            mBankDeals = JsonUtil.getInstance().getGson().fromJson(getIntent().getStringExtra("bankDeals"), listType);
-        } catch (Exception ex) {
-            mBankDeals = null;
+            initializeControls();
+            onValidStart();
+        } catch (IllegalStateException exception) {
+            ErrorUtil.startErrorActivity(this, exception.getMessage(), false);
         }
     }
 
-    @Override
-    protected void validateActivityParameters() throws IllegalStateException {
+    protected void onValidStart() {
+        createPresenter();
+        presenter.trackView();
+        presenter.getBankDeals();
+    }
 
+    private void createPresenter() {
+        final Session session = Session.getSession(this);
+        presenter = new BankDealsPresenter(session
+            .getBankDealsRepository());
+        presenter.attachView(this);
+    }
+
+    protected void initializeControls() {
+        initializeToolbar();
+        bankDealsRecyclerView = findViewById(R.id.mpsdkBankDealsList);
+        bankDealsRecyclerView.setHasFixedSize(true);
+        bankDealsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }
 
     private void initializeToolbar() {
-        mToolbar = findViewById(R.id.mpsdkToolbar);
-        setSupportActionBar(mToolbar);
+        toolbar = findViewById(R.id.mpsdkToolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -94,60 +74,49 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
         });
     }
 
-    /* default */ void getBankDeals() {
-        ViewUtils.showProgressLayout(this);
-        final BankDealsRepository bankDealsRepository = Session.getSession(this).getBankDealsRepository();
-        bankDealsRepository.getBankDealsAsync()
-            .enqueue(new TaggedCallback<List<BankDeal>>(ApiUtil.RequestOrigin.GET_BANK_DEALS) {
-
-                @Override
-                public void onSuccess(final List<BankDeal> bankDeals) {
-                    solveBankDeals(bankDeals);
-                }
-
-                @Override
-                public void onFailure(final MercadoPagoError error) {
-                    if (isActivityActive()) {
-                        setFailureRecovery(new FailureRecovery() {
-                            @Override
-                            public void recover() {
-                                getBankDeals();
-                            }
-                        });
-
-                        ErrorUtil.showApiExceptionError(getActivity(),
-                            error.getApiException(),
-                            ApiUtil.RequestOrigin.GET_BANK_DEALS);
-                    } else {
-                        finishWithCancelResult();
-                    }
-                }
-            });
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                recoverFromFailure();
+                presenter.recoverFromFailure();
             } else {
                 finishWithCancelResult();
             }
         }
     }
 
-    /* default */ void finishWithCancelResult() {
+    private void finishWithCancelResult() {
         setResult(RESULT_CANCELED);
         finish();
     }
 
-    protected void solveBankDeals(List<BankDeal> bankDeals) {
-        mRecyclerView.setAdapter(new BankDealsAdapter(bankDeals, this));
-        ViewUtils.showRegularLayout(getActivity());
+    @Override
+    public void showApiExceptionError(@NonNull final MercadoPagoError error) {
+        ErrorUtil.showApiExceptionError(this,
+            error.getApiException(),
+            ApiUtil.RequestOrigin.GET_BANK_DEALS);
     }
 
     @Override
-    public void onSelected(final BankDeal selectedBankDeal) {
-        BankDealDetailActivity.startWithBankDealLegals(this, selectedBankDeal);
+    public void showLoadingView() {
+        ViewUtils.showProgressLayout(this);
+    }
+
+    @Override
+    public void showBankDeals(@NonNull final List<BankDeal> bankDeals,
+        @NonNull final OnSelectedCallback<BankDeal> onSelectedCallback) {
+        initializeAdapter(bankDeals, onSelectedCallback);
+        ViewUtils.showRegularLayout(this);
+    }
+
+    private void initializeAdapter(final @NonNull List<BankDeal> bankDeals,
+        final @NonNull OnSelectedCallback<BankDeal> onSelectedCallback) {
+        bankDealsAdapter = new BankDealsAdapter(bankDeals, onSelectedCallback);
+        bankDealsRecyclerView.setAdapter(bankDealsAdapter);
+    }
+
+    @Override
+    public void showBankDealDetail(@NonNull final BankDeal bankDeal) {
+        BankDealDetailActivity.startWithBankDealLegals(this, bankDeal);
     }
 }
