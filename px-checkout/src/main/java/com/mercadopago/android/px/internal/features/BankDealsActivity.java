@@ -32,13 +32,12 @@ public class BankDealsActivity extends PXActivity<BankDealsPresenter>
         super.onCreate(savedInstanceState);
         setContentView(R.layout.px_activity_bank_deals);
         initialize();
-        presenter.trackView();
-        presenter.getBankDeals();
     }
 
     private void initialize() {
         initializeControls();
         createPresenter();
+        presenter.initialize();
     }
 
     private void createPresenter() {

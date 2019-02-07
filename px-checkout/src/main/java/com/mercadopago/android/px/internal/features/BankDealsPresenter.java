@@ -17,8 +17,14 @@ public class BankDealsPresenter extends BasePresenter<BankDealsView> implements 
     private FailureRecovery failureRecovery;
     private BankDealsRepository bankDealsRepository;
 
-    public BankDealsPresenter(final BankDealsRepository bankDealsRepository) {
+    /* package */ BankDealsPresenter(final BankDealsRepository bankDealsRepository) {
         this.bankDealsRepository = bankDealsRepository;
+    }
+
+    @Override
+    public void initialize() {
+        trackView();
+        getBankDeals();
     }
 
     @Override

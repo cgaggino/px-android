@@ -10,5 +10,6 @@ public interface BankDeals {
         void getBankDeals();
         void solveBankDeals(@NonNull final List<BankDeal> bankDeals);
         void recoverFromFailure();
+        void initialize();
     }
 }
