@@ -23,7 +23,8 @@ public class BankDealsPresenter extends BasePresenter<BankDealsView> implements 
 
     @Override
     public void trackView() {
-        new BankDealsViewTracker().track();
+        final BankDealsViewTracker bankDealsViewTracker = new BankDealsViewTracker();
+        setCurrentViewTracker(bankDealsViewTracker);
     }
 
     private OnSelectedCallback<BankDeal> getOnSelectedCallback() {
