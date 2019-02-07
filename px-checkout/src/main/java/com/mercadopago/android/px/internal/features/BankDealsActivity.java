@@ -21,7 +21,7 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.List;
 
 public class BankDealsActivity extends PXActivity<BankDealsPresenter>
-    implements BankDealsView {
+    implements BankDeals.View {
 
     protected RecyclerView bankDealsRecyclerView;
     protected Toolbar toolbar;

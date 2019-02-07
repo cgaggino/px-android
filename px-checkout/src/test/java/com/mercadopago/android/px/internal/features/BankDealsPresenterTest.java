@@ -3,7 +3,7 @@ package com.mercadopago.android.px.internal.features;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.repository.BankDealsRepository;
-import com.mercadopago.android.px.mocks.BankDeals;
+import com.mercadopago.android.px.mocks.BankDealsUtils;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -30,7 +30,7 @@ public class BankDealsPresenterTest {
     private BankDealsPresenter presenter;
 
     @Mock private BankDealsRepository bankDealsRepository;
-    @Mock private BankDealsView view;
+    @Mock private BankDeals.View view;
 
     @Before
     public void setUp() {
@@ -38,7 +38,7 @@ public class BankDealsPresenterTest {
     }
 
     @NonNull
-    private BankDealsPresenter getBasePresenter(final BankDealsView view) {
+    private BankDealsPresenter getBasePresenter(final BankDeals.View view) {
         final BankDealsPresenter presenter = new BankDealsPresenter(bankDealsRepository);
         presenter.attachView(view);
         return presenter;
@@ -51,7 +51,7 @@ public class BankDealsPresenterTest {
 
     @Test
     public void whenGetBankDealsWithSuccessThenShowThem() {
-        final List<BankDeal> bankDealsListMLA = BankDeals.getBankDealsListMLA();
+        final List<BankDeal> bankDealsListMLA = BankDealsUtils.getBankDealsListMLA();
         when(bankDealsRepository.getBankDealsAsync())
             .thenReturn(new StubSuccessMpCall<>(bankDealsListMLA));
 
@@ -78,7 +78,7 @@ public class BankDealsPresenterTest {
     @Test
     public void whenGetBankDealsFailsAndRecoverThenShowBankDeals() {
         final ApiException apiException = mock(ApiException.class);
-        final List<BankDeal> bankDealsListMLA = BankDeals.getBankDealsListMLA();
+        final List<BankDeal> bankDealsListMLA = BankDealsUtils.getBankDealsListMLA();
 
         when(bankDealsRepository.getBankDealsAsync())
             .thenReturn(new StubFailMpCall<>(apiException));
