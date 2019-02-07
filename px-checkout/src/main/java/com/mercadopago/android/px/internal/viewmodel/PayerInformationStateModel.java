@@ -26,9 +26,6 @@ public final class PayerInformationStateModel {
     public IdentificationType identificationType;
     public List<IdentificationType> identificationTypeList;
 
-    public PayerInformationStateModel() {
-    }
-
     public void toBundle(@NonNull final Bundle bundle) {
         bundle.putString(IDENTIFICATION_NUMBER_BUNDLE, identificationNumber);
         bundle.putString(IDENTIFICATION_NAME_BUNDLE, identificationName);
