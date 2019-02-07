@@ -7,24 +7,90 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.model.BankDeal;
-import com.mercadopago.android.px.tracking.internal.views.BankDealsDetailViewTracker;
-import com.squareup.picasso.Callback;
 
-public class BankDealDetailActivity extends AppCompatActivity implements Callback {
+public class BankDealDetailActivity extends PXActivity<BankDealDetailPresenter> implements BankDealDetail.View {
 
     private static final String EXTRA_MODEL = "extra_model";
 
     private ImageView logo;
     private TextView logoName;
+
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.px_activity_bank_deal_detail);
+        createPresenter();
+        presenter.initialize();
+        initializeControls();
+    }
+
+    public static void startWithBankDealLegals(@NonNull final Context context,
+        @NonNull final BankDeal bankDeal) {
+        final Intent intent = new Intent(context, BankDealDetailActivity.class);
+        intent.putExtra(EXTRA_MODEL, BankDealDetailModel.createWith(bankDeal));
+        context.startActivity(intent);
+    }
+
+    private void initializeControls() {
+        final BankDealDetailModel model = getIntent().getParcelableExtra(EXTRA_MODEL);
+        initView(model);
+    }
+
+    private void createPresenter() {
+        presenter = new BankDealDetailPresenter();
+        presenter.attachView(this);
+    }
+
+    private void initView(final BankDealDetailModel model) {
+        initToolbar();
+        logo = findViewById(R.id.logo);
+        final TextView title = findViewById(R.id.title);
+        logoName = findViewById(R.id.logo_name);
+        final TextView expDate = findViewById(R.id.exp_date);
+        final TextView legals = findViewById(R.id.legals);
+        expDate.setText(getString(R.string.bank_deal_details_date_format, model.formattedExpirationDate));
+        ViewUtils.loadOrGone(Html.fromHtml(model.dealTitle), title);
+        ViewUtils.loadOrGone(model.legal, legals);
+        logoName.setText(model.issuerName);
+        ViewUtils.loadOrCallError(model.imgUrl, logo, presenter.getViewCallBack());
+    }
+
+    private void initToolbar() {
+        final Toolbar toolbar = findViewById(R.id.mpsdkToolbar);
+        final TextView titleToolbar = toolbar.findViewById(R.id.mpsdkTitle);
+        setSupportActionBar(toolbar);
+        final ActionBar supportActionBar = getSupportActionBar();
+        supportActionBar.setDisplayShowTitleEnabled(false);
+        supportActionBar.setDisplayShowTitleEnabled(false);
+        supportActionBar.setDisplayHomeAsUpEnabled(true);
+        supportActionBar.setDisplayShowHomeEnabled(true);
+        titleToolbar.setText(R.string.bank_deal_details_title);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                onBackPressed();
+            }
+        });
+    }
+
+    @Override
+    public void hideLogoName() {
+        logoName.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideLogo() {
+        logo.setVisibility(View.GONE);
+    }
 
     private static class BankDealDetailModel implements Parcelable {
 
@@ -91,63 +157,5 @@ public class BankDealDetailActivity extends AppCompatActivity implements Callbac
             dest.writeString(dealTitle);
             dest.writeString(issuerName);
         }
-    }
-
-    public static void startWithBankDealLegals(@NonNull final Context context,
-        @NonNull final BankDeal bankDeal) {
-        final Intent intent = new Intent(context, BankDealDetailActivity.class);
-        intent.putExtra(EXTRA_MODEL, BankDealDetailModel.createWith(bankDeal));
-        context.startActivity(intent);
-    }
-
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.px_activity_bank_deal_detail);
-        new BankDealsDetailViewTracker().track();
-        final BankDealDetailModel model = getIntent().getParcelableExtra(EXTRA_MODEL);
-        initView(model);
-    }
-
-    private void initView(final BankDealDetailModel model) {
-        initToolbar();
-        logo = findViewById(R.id.logo);
-        final TextView title = findViewById(R.id.title);
-        logoName = findViewById(R.id.logo_name);
-        final TextView expDate = findViewById(R.id.exp_date);
-        final TextView legals = findViewById(R.id.legals);
-        expDate.setText(getString(R.string.bank_deal_details_date_format, model.formattedExpirationDate));
-        ViewUtils.loadOrGone(Html.fromHtml(model.dealTitle), title);
-        ViewUtils.loadOrGone(model.legal, legals);
-        logoName.setText(model.issuerName);
-        ViewUtils.loadOrCallError(model.imgUrl, logo, this);
-    }
-
-    @Override
-    public void onSuccess() {
-        logoName.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onError() {
-        logo.setVisibility(View.GONE);
-    }
-
-    private void initToolbar() {
-        final Toolbar toolbar = findViewById(R.id.mpsdkToolbar);
-        final TextView titleToolbar = toolbar.findViewById(R.id.mpsdkTitle);
-        setSupportActionBar(toolbar);
-        final ActionBar supportActionBar = getSupportActionBar();
-        supportActionBar.setDisplayShowTitleEnabled(false);
-        supportActionBar.setDisplayShowTitleEnabled(false);
-        supportActionBar.setDisplayHomeAsUpEnabled(true);
-        supportActionBar.setDisplayShowHomeEnabled(true);
-        titleToolbar.setText(R.string.bank_deal_details_title);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                onBackPressed();
-            }
-        });
     }
 }
