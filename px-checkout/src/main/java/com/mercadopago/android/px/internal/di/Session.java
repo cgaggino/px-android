@@ -150,8 +150,7 @@ public final class Session extends ApplicationModule
         if (groupsRepository == null) {
             final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
             groupsRepository = new GroupsService(paymentSettings, getMercadoPagoESC(),
-                //TODO REMOVE
-                RetrofitUtil.getFakeClient(getContext()).create(CheckoutService.class),
+                RetrofitUtil.getRetrofitClient(getContext()).create(CheckoutService.class),
                 LocaleUtil.getLanguage(getContext()),
                 getGroupsCache());
         }

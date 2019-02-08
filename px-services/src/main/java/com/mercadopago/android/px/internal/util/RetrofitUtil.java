@@ -34,18 +34,4 @@ public final class RetrofitUtil {
             .addCallAdapterFactory(new ErrorHandlingCallAdapter.ErrorHandlingCallAdapterFactory())
             .build();
     }
-
-
-    //TODO REMOVE
-    private static final String FAKE = "http://private-f37e0c-split2.apiary-mock.com";
-    //TODO REMOVE
-    public static Retrofit getFakeClient(final Context context) {
-
-        return new Retrofit.Builder()
-            .baseUrl(FAKE)
-            .addConverterFactory(GsonConverterFactory.create(JsonUtil.getInstance().getGson()))
-            .client(HttpClientUtil.getClient(context, 10, 10, 10))
-            .addCallAdapterFactory(new ErrorHandlingCallAdapter.ErrorHandlingCallAdapterFactory())
-            .build();
-    }
 }
