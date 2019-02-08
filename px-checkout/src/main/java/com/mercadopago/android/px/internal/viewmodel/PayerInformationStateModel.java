@@ -15,12 +15,11 @@ public final class PayerInformationStateModel implements Parcelable {
 
     private static final String BUNDLE_PAYER_INFO = "bundle_payer_info";
     private static final String IDENTIFICATION_TYPE_CPF = "CPF";
-    private static final String BUNDLE_CURRENT_TEXT = "bundle_current_text";
 
     private String identificationNumber;
     private String identificationName;
     private String identificationLastName;
-    private Identification identification;
+    private final Identification identification;
     private IdentificationType identificationType;
     private List<IdentificationType> identificationTypeList;
     private String currentFocusType;
