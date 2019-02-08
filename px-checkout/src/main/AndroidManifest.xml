@@ -64,7 +64,7 @@
             android:name=".internal.features.ReviewPaymentMethodsActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
-            android:name=".internal.features.PayerInformationActivity"
+            android:name=".internal.features.payer_information.PayerInformationActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
             android:name=".internal.features.hooks.HookActivity"

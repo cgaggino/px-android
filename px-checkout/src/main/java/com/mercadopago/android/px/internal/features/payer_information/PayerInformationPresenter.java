@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.internal.features;
+package com.mercadopago.android.px.internal.features.payer_information;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.BasePresenter;
@@ -17,60 +17,68 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.tracking.internal.views.CPFViewTracker;
 import com.mercadopago.android.px.tracking.internal.views.LastNameViewTracker;
 import com.mercadopago.android.px.tracking.internal.views.NameViewTracker;
-import java.util.ArrayList;
 import java.util.List;
 
-public class PayerInformationPresenter extends BasePresenter<PayerInformationView> implements PayerInformation.Actions {
+/* default */ class PayerInformationPresenter extends BasePresenter<PayerInformation.View>
+    implements PayerInformation.Actions {
 
     @NonNull /* default */ final PayerInformationStateModel state;
     @NonNull
     private final PaymentSettingRepository paymentSettings;
+
     @NonNull
     private final IdentificationRepository identificationRepository;
-
-    //Payer info
-    private String mIdentificationBusinessName;
 
     private FailureRecovery mFailureRecovery;
 
     private static final int DEFAULT_IDENTIFICATION_NUMBER_LENGTH = 12;
-    private static final String IDENTIFICATION_TYPE_CPF = "CPF";
 
-    public PayerInformationPresenter(
-        @NonNull final PayerInformationStateModel state,
+    /* default */ PayerInformationPresenter(@NonNull final PayerInformationStateModel state,
         @NonNull final PaymentSettingRepository paymentSettings,
         @NonNull final IdentificationRepository identificationRepository) {
         this.state = state;
         this.paymentSettings = paymentSettings;
         this.identificationRepository = identificationRepository;
-        if (state.identification == null) {
-            state.identification = new Identification();
+    }
+
+    @Override
+    public void attachView(final PayerInformation.View view) {
+        super.attachView(view);
+
+        if (state.hasIdentificationTypes()) {
+            view.hideProgressBar();
+        } else {
+            view.showProgressBar();
+            getIdentificationTypesAsync();
+        }
+
+        if (state.hasFilledInfo()) {
+            view.initializeIdentificationTypes(state.getIdentificationTypeList(), state.getIdentificationType());
+            view.setName(state.getIdentificationName());
+            view.setLastName(state.getIdentificationLastName());
+            view.setNumber(state.getIdentificationNumber());
+            view.identificationDraw();
         }
     }
 
-    public void initialize() {
-        getIdentificationTypesAsync();
-    }
-
     private void getIdentificationTypesAsync() {
-        getView().showProgressBar();
-
         identificationRepository.getIdentificationTypes().enqueue(
             new TaggedCallback<List<IdentificationType>>(ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES) {
                 @Override
                 public void onSuccess(final List<IdentificationType> identificationTypes) {
                     resolveIdentificationTypes(identificationTypes);
                     getView().hideProgressBar();
-                    getView().showInputContainer();
+                    getView().requestIdentificationNumberFocus();
                 }
 
                 @Override
-                public void onFailure(MercadoPagoError error) {
+                public void onFailure(final MercadoPagoError error) {
                     if (isViewAttached()) {
                         getView().showError(error, ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES);
                         setFailureRecovery(new FailureRecovery() {
                             @Override
                             public void recover() {
+                                getView().showProgressBar();
                                 getIdentificationTypesAsync();
                             }
                         });
@@ -79,54 +87,40 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
             });
     }
 
-    private void resolveIdentificationTypes(List<IdentificationType> identificationTypes) {
+    private void resolveIdentificationTypes(final List<IdentificationType> identificationTypes) {
         if (identificationTypes.isEmpty()) {
             getView().showMissingIdentificationTypesError();
         } else {
-            state.identificationType = identificationTypes.get(0);
-            getView().initializeIdentificationTypes(identificationTypes);
-            state.identificationTypeList = getCPFIdentificationTypes(identificationTypes);
+            state.setIdentificationTypes(identificationTypes);
+            getView().initializeIdentificationTypes(identificationTypes, state.getIdentificationType());
         }
-    }
-
-    private List<IdentificationType> getCPFIdentificationTypes(List<IdentificationType> identificationTypes) {
-        final List<IdentificationType> identificationTypesList = new ArrayList<>();
-
-        for (final IdentificationType identificationType : identificationTypes) {
-            if (identificationType.getId().equals(IDENTIFICATION_TYPE_CPF)) {
-                identificationTypesList.add(identificationType);
-            }
-        }
-
-        return identificationTypesList;
     }
 
     public void saveIdentificationNumber(final String identificationNumber) {
-        state.identificationNumber = identificationNumber;
-        state.identification.setNumber(identificationNumber);
+        state.setIdentificationNumber(identificationNumber);
     }
 
     public void saveIdentificationName(final String identificationName) {
-        state.identificationName = identificationName;
+        state.setIdentificationName(identificationName);
     }
 
     public void saveIdentificationLastName(final String identificationLastName) {
-        state.identificationLastName = identificationLastName;
+        state.setIdentificationLastName(identificationLastName);
     }
 
     public int getIdentificationNumberMaxLength() {
         int maxLength = DEFAULT_IDENTIFICATION_NUMBER_LENGTH;
 
-        if (state.identificationType != null) {
-            maxLength = state.identificationType.getMaxLength();
+        if (state.getIdentificationType() != null) {
+            maxLength = state.getIdentificationType().getMaxLength();
         }
         return maxLength;
     }
 
     public void saveIdentificationType(final IdentificationType identificationType) {
-        state.identificationType = identificationType;
+        state.setIdentificationType(identificationType);
         if (identificationType != null) {
-            state.identification.setType(identificationType.getId());
+            state.getIdentification().setType(identificationType.getId());
             getView().setIdentificationNumberRestrictions(identificationType.getType());
         }
     }
@@ -136,9 +130,9 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
         final CheckoutPreference checkoutPreference = paymentSettings.getCheckoutPreference();
         final Payer payer = checkoutPreference.getPayer();
         // add collected information.
-        payer.setFirstName(state.identificationName);
-        payer.setLastName(state.identificationLastName);
-        payer.setIdentification(state.identification);
+        payer.setFirstName(state.getIdentificationName());
+        payer.setLastName(state.getIdentificationLastName());
+        payer.setIdentification(state.getIdentification());
         // reconfigure
         paymentSettings.configure(checkoutPreference);
     }
@@ -171,12 +165,14 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
     }
 
     private boolean validateIdentificationNumberLength() {
-        if (state.identificationType != null) {
-            if ((state.identification != null) &&
-                (state.identification.getNumber() != null)) {
-                final int len = state.identification.getNumber().length();
-                final Integer min = state.identificationType.getMinLength();
-                final Integer max = state.identificationType.getMaxLength();
+        final IdentificationType identificationType = state.getIdentificationType();
+        if (identificationType != null) {
+            final Identification identification = state.getIdentification();
+            if ((identification != null) &&
+                (identification.getNumber() != null)) {
+                final int len = identification.getNumber().length();
+                final Integer min = identificationType.getMinLength();
+                final Integer max = identificationType.getMaxLength();
                 if ((min != null) && (max != null)) {
                     return ((len <= max) && (len >= min));
                 } else {
@@ -191,24 +187,27 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
     }
 
     private boolean validateNumber() {
-        return state.identification != null && validateIdentificationType() &&
-            !TextUtil.isEmpty(state.identification.getNumber());
+        final Identification identification = state.getIdentification();
+        return identification != null && validateIdentificationType() &&
+            !TextUtil.isEmpty(identification.getNumber());
     }
 
     private boolean validateIdentificationType() {
-        return state.identification != null && !TextUtil.isEmpty(state.identification.getType());
+        final Identification identification = state.getIdentification();
+        return identification != null && !TextUtil.isEmpty(identification.getType());
     }
 
     public boolean checkIsEmptyOrValidName() {
-        return TextUtil.isEmpty(state.identificationName) || validateName();
+        return TextUtil.isEmpty(state.getIdentificationName()) || validateName();
     }
 
     public boolean checkIsEmptyOrValidLastName() {
-        return TextUtil.isEmpty(state.identificationLastName) || validateLastName();
+        return TextUtil.isEmpty(state.getIdentificationLastName()) || validateLastName();
     }
 
+    @Override
     public boolean validateName() {
-        final boolean isNameValid = validateString(state.identificationName);
+        final boolean isNameValid = TextUtil.isNotEmpty(state.getIdentificationName());
 
         if (isNameValid) {
             getView().clearErrorView();
@@ -221,8 +220,9 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
         return isNameValid;
     }
 
+    @Override
     public boolean validateLastName() {
-        final boolean isLastNameValid = validateString(state.identificationLastName);
+        final boolean isLastNameValid = TextUtil.isNotEmpty(state.getIdentificationLastName());
 
         if (isLastNameValid) {
             getView().clearErrorView();
@@ -233,26 +233,6 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
         }
 
         return isLastNameValid;
-    }
-
-    public boolean validateBusinessName() {
-        final boolean isBusinessNameValid = validateString(mIdentificationBusinessName);
-
-        if (isBusinessNameValid) {
-            getView().clearErrorView();
-            //TODO fix when cnpj is available
-            getView().clearErrorName();
-        } else {
-            getView().setInvalidIdentificationBusinessNameErrorView();
-            //TODO fix when cnpj is available
-            getView().setErrorName();
-        }
-
-        return isBusinessNameValid;
-    }
-
-    private boolean validateString(String string) {
-        return !TextUtil.isEmpty(string);
     }
 
     @Override
@@ -287,5 +267,10 @@ public class PayerInformationPresenter extends BasePresenter<PayerInformationVie
     @Override
     public PayerInformationStateModel getState() {
         return state;
+    }
+
+    @Override
+    public void focus(final String currentFocusType) {
+        state.setFocus(currentFocusType);
     }
 }

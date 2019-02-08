@@ -1,6 +1,9 @@
 package com.mercadopago.android.px.model;
 
-public class IdentificationType {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class IdentificationType implements Parcelable {
 
     private String id;
     private String name;
@@ -19,6 +22,34 @@ public class IdentificationType {
         this.minLength = minLength;
         this.maxLength = maxLength;
     }
+
+    protected IdentificationType(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        type = in.readString();
+        if (in.readByte() == 0) {
+            minLength = null;
+        } else {
+            minLength = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            maxLength = null;
+        } else {
+            maxLength = in.readInt();
+        }
+    }
+
+    public static final Creator<IdentificationType> CREATOR = new Creator<IdentificationType>() {
+        @Override
+        public IdentificationType createFromParcel(Parcel in) {
+            return new IdentificationType(in);
+        }
+
+        @Override
+        public IdentificationType[] newArray(int size) {
+            return new IdentificationType[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -58,5 +89,29 @@ public class IdentificationType {
 
     public void setMaxLength(Integer maxLength) {
         this.maxLength = maxLength;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(final Parcel dest, final int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(type);
+        if (minLength == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(minLength);
+        }
+        if (maxLength == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(maxLength);
+        }
     }
 }

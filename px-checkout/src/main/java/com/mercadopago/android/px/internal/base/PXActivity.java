@@ -1,11 +1,23 @@
 package com.mercadopago.android.px.internal.base;
 
+import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.v7.app.AppCompatActivity;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.viewmodel.PayerInformationStateModel;
 
 public abstract class PXActivity<P extends BasePresenter> extends AppCompatActivity implements MvpView {
 
+    protected static final String BUNDLE_CREATED = "bundle_created";
+
     protected P presenter;
+
+    @CallSuper
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(BUNDLE_CREATED, true);
+    }
 
     @Override
     public void onBackPressed() {

@@ -1,8 +1,5 @@
-package com.mercadopago.android.px.payerInformation;
+package com.mercadopago.android.px.internal.features.payer_information;
 
-import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.features.PayerInformationPresenter;
-import com.mercadopago.android.px.internal.features.PayerInformationView;
 import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.viewmodel.PayerInformationStateModel;
@@ -32,43 +29,28 @@ import static org.mockito.Mockito.when;
 public class PayerInformationPresenterTest {
 
     public static final String DUMMY_NAME = "Name";
+
     @Mock private PaymentSettingRepository paymentSettingRepository;
     @Mock private IdentificationRepository identificationRepository;
 
-    @Mock private PayerInformationView view;
+    @Mock private PayerInformation.View view;
     @Mock private PayerInformationStateModel stateModel;
 
     private PayerInformationPresenter presenter;
 
     @Before
     public void setUp() {
-        presenter = getPresenter();
-    }
-
-    @NonNull
-    private PayerInformationPresenter getBasePresenter(
-        final PayerInformationView view) {
-
-        PayerInformationPresenter presenter = new PayerInformationPresenter(
-            stateModel, paymentSettingRepository, identificationRepository);
-
-        presenter.attachView(view);
-        return presenter;
-    }
-
-    @NonNull
-    private PayerInformationPresenter getPresenter() {
-        return getBasePresenter(view);
+        presenter = new PayerInformationPresenter(stateModel, paymentSettingRepository, identificationRepository);
     }
 
     @Test
     public void whenInitializePresenterThenInitializeIdentificationTypes() {
         final List<IdentificationType> stubIdentificationTypes = IdentificationTypes.getIdentificationTypes();
-
+        when(stateModel.hasIdentificationTypes()).thenReturn(false);
         when(identificationRepository.getIdentificationTypes())
             .thenReturn(new StubSuccessMpCall<>(stubIdentificationTypes));
 
-        presenter.initialize();
+        presenter.attachView(view);
 
         verify(view).showProgressBar();
         verify(view).initializeIdentificationTypes(stubIdentificationTypes);
@@ -81,10 +63,11 @@ public class PayerInformationPresenterTest {
     public void whenGetIdentificationTypesFailThenShowError() {
         final ApiException apiException = mock(ApiException.class);
 
+        when(stateModel.hasIdentificationTypes()).thenReturn(false);
         when(identificationRepository.getIdentificationTypes())
             .thenReturn(new StubFailMpCall<>(apiException));
 
-        presenter.initialize();
+        presenter.attachView(view);
 
         verify(view).showProgressBar();
         verify(view).showError(any(MercadoPagoError.class), anyString());
@@ -93,69 +76,82 @@ public class PayerInformationPresenterTest {
 
     @Test
     public void whenNameIsValidThenClearError() {
-        presenter.getState().identificationName = DUMMY_NAME;
+        when(stateModel.hasIdentificationTypes()).thenReturn(true);
+        presenter.attachView(view);
+
+        when(stateModel.getIdentificationName()).thenReturn(DUMMY_NAME);
         presenter.checkIsEmptyOrValidName();
 
         verify(view).clearErrorView();
         verify(view).clearErrorName();
-        verifyNoMoreInteractions(view);
     }
 
     @Test
     public void whenNameIsNotValidThenSetErrorView() {
+        when(stateModel.hasIdentificationTypes()).thenReturn(true);
+        when(stateModel.getIdentificationName()).thenReturn(null);
+        presenter.attachView(view);
+
         presenter.validateName();
 
         verify(view).setInvalidIdentificationNameErrorView();
         verify(view).setErrorName();
-        verifyNoMoreInteractions(view);
     }
 
     @Test
     public void whenLastNameIsValidThenClearError() {
-        presenter.getState().identificationLastName = DUMMY_NAME;
+        when(stateModel.hasIdentificationTypes()).thenReturn(true);
+        when(stateModel.getIdentificationLastName()).thenReturn(DUMMY_NAME);
+        presenter.attachView(view);
+
         presenter.checkIsEmptyOrValidLastName();
 
         verify(view).clearErrorView();
         verify(view).clearErrorLastName();
-        verifyNoMoreInteractions(view);
     }
 
     @Test
     public void whenLastNameIsNotValidThenSetErrorView() {
+
+        when(stateModel.hasIdentificationTypes()).thenReturn(true);
+        when(stateModel.getIdentificationLastName()).thenReturn(null);
+        presenter.attachView(view);
+
         presenter.validateLastName();
 
         verify(view).setInvalidIdentificationLastNameErrorView();
         verify(view).setErrorLastName();
-        verifyNoMoreInteractions(view);
     }
 
+    //"APP_USR-f3f035a2-d343-4a6f-bd3b-fc3c3cb72416", "245099733-8771f469-d68e-4863-b8cb-9402e22c6bb2"
     @Test
     public void whenNumberIsNotValidThenSetErrorView() {
         final IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
         final Identification identification = IdentificationUtils.getIdentificationWithWrongNumberCPF();
-
-        presenter.getState().identificationType = identificationType;
-        presenter.getState().identification = identification;
+        when(stateModel.getIdentificationType()).thenReturn(identificationType);
+        when(stateModel.hasIdentificationTypes()).thenReturn(true);
+        when(stateModel.getIdentification()).thenReturn(identification);
+        presenter.attachView(view);
 
         presenter.validateIdentificationNumber();
 
         verify(view).setInvalidIdentificationNumberErrorView();
         verify(view).setErrorIdentificationNumber();
-        verifyNoMoreInteractions(view);
     }
 
     @Test
     public void whenNumberIsValidThenClearError() {
-        IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
-        Identification identification = IdentificationUtils.getIdentificationCPF();
-
-        presenter.getState().identificationType = identificationType;
-        presenter.getState().identification = identification;
+        final IdentificationType identificationType = IdentificationTypes.getIdentificationTypeCPF();
+        final Identification identification = IdentificationUtils.getIdentificationCPF();
+        when(stateModel.getIdentificationType()).thenReturn(identificationType);
+        when(stateModel.hasIdentificationTypes()).thenReturn(true);
+        when(stateModel.getIdentification()).thenReturn(identification);
+        presenter.attachView(view);
 
         presenter.validateIdentificationNumber();
 
         verify(view).clearErrorView();
         verify(view).clearErrorIdentificationNumber();
-        verifyNoMoreInteractions(view);
+
     }
 }
