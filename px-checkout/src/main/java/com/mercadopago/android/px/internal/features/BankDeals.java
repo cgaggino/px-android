@@ -7,9 +7,9 @@ import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.List;
 
-public interface BankDeals {
+/* default */ interface BankDeals {
 
-    interface View extends MvpView {
+    /* default */ interface View extends MvpView {
         void showBankDealDetail(@NonNull final BankDeal bankDeal);
 
         void showApiExceptionError(@NonNull final MercadoPagoError error);
@@ -20,7 +20,7 @@ public interface BankDeals {
             @NonNull final OnSelectedCallback<BankDeal> onSelectedCallback);
     }
 
-    interface Actions {
+    /* default */ interface Actions {
         void trackView();
 
         void getBankDeals();
