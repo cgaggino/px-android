@@ -53,9 +53,9 @@ public class PayerInformationPresenterTest {
         presenter.attachView(view);
 
         verify(view).showProgressBar();
-        verify(view).initializeIdentificationTypes(stubIdentificationTypes);
+        verify(view).initializeIdentificationTypes(stubIdentificationTypes, stateModel.getIdentificationType());
         verify(view).hideProgressBar();
-        verify(view).showInputContainer();
+        verify(view).requestIdentificationNumberFocus();
         verifyNoMoreInteractions(view);
     }
 
