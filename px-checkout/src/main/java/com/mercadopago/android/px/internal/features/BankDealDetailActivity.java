@@ -29,7 +29,6 @@ public class BankDealDetailActivity extends PXActivity<BankDealDetailPresenter> 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.px_activity_bank_deal_detail);
         createPresenter();
-        presenter.initialize();
         initializeControls();
     }
 
@@ -61,7 +60,7 @@ public class BankDealDetailActivity extends PXActivity<BankDealDetailPresenter> 
         ViewUtils.loadOrGone(Html.fromHtml(model.dealTitle), title);
         ViewUtils.loadOrGone(model.legal, legals);
         logoName.setText(model.issuerName);
-        ViewUtils.loadOrCallError(model.imgUrl, logo, presenter.getViewCallBack());
+        ViewUtils.loadOrCallError(model.imgUrl, logo, presenter);
     }
 
     private void initToolbar() {

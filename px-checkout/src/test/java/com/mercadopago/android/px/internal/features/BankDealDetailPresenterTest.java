@@ -35,7 +35,7 @@ public class BankDealDetailPresenterTest {
 
     @Test
     public void whenGetViewCallbackOnSuccessThenHideLogoName(){
-        presenter.getViewCallBack().onSuccess();
+        presenter.onSuccess();
 
         verify(view).hideLogoName();
         verifyNoMoreInteractions(view);
@@ -43,7 +43,7 @@ public class BankDealDetailPresenterTest {
 
     @Test
     public void whenGetViewCallbackOnErrorThenHideLogo(){
-        presenter.getViewCallBack().onError();
+        presenter.onError();
 
         verify(view).hideLogo();
         verifyNoMoreInteractions(view);
