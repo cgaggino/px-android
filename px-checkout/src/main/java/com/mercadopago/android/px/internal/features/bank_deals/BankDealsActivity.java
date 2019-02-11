@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.internal.features;
+package com.mercadopago.android.px.internal.features.bank_deals;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,7 +22,7 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.List;
 
 public class BankDealsActivity extends PXActivity<BankDealsPresenter>
-    implements BankDealsView {
+    implements BankDeals.View {
 
     protected RecyclerView bankDealsRecyclerView;
     protected Toolbar toolbar;
@@ -32,10 +32,6 @@ public class BankDealsActivity extends PXActivity<BankDealsPresenter>
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.px_activity_bank_deals);
-        initialize();
-    }
-
-    private void initialize() {
         initializeControls();
         createPresenter();
         presenter.initialize();
@@ -73,6 +69,7 @@ public class BankDealsActivity extends PXActivity<BankDealsPresenter>
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
+            presenter.attachView(this);
             if (resultCode == Activity.RESULT_OK) {
                 presenter.recoverFromFailure();
             } else {

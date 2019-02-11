@@ -13,7 +13,7 @@ import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.IssuersRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.mocks.BankDeals;
+import com.mercadopago.android.px.mocks.BankDealsUtils;
 import com.mercadopago.android.px.mocks.Cards;
 import com.mercadopago.android.px.mocks.DummyCard;
 import com.mercadopago.android.px.mocks.IdentificationTypes;
@@ -618,7 +618,7 @@ public class GuessingCardPaymentPresenterTest {
     // --------- Helper methods ----------- //
 
     private void whenGetBankDealsAsync() {
-        final List<BankDeal> bankDeals = BankDeals.getBankDealsListMLA();
+        final List<BankDeal> bankDeals = BankDealsUtils.getBankDealsListMLA();
         when(bankDealsRepository.getBankDealsAsync()).thenReturn(new StubSuccessMpCall<>(bankDeals));
     }
 

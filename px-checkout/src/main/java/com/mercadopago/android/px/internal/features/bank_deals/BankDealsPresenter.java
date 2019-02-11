@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.internal.features;
+package com.mercadopago.android.px.internal.features.bank_deals;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.BasePresenter;
@@ -12,7 +12,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.tracking.internal.views.BankDealsViewTracker;
 import java.util.List;
 
-public class BankDealsPresenter extends BasePresenter<BankDealsView> implements BankDeals.Actions {
+/* default */ class BankDealsPresenter extends BasePresenter<BankDeals.View>
+    implements BankDeals.Actions, OnSelectedCallback<BankDeal> {
 
     private FailureRecovery failureRecovery;
     private BankDealsRepository bankDealsRepository;
@@ -33,15 +34,6 @@ public class BankDealsPresenter extends BasePresenter<BankDealsView> implements 
         setCurrentViewTracker(bankDealsViewTracker);
     }
 
-    private OnSelectedCallback<BankDeal> getOnSelectedCallback() {
-        return new OnSelectedCallback<BankDeal>() {
-            @Override
-            public void onSelected(final BankDeal bankDeal) {
-                getView().showBankDealDetail(bankDeal);
-            }
-        };
-    }
-
     @Override
     public void getBankDeals() {
         getView().showLoadingView();
@@ -50,25 +42,29 @@ public class BankDealsPresenter extends BasePresenter<BankDealsView> implements 
 
                 @Override
                 public void onSuccess(final List<BankDeal> bankDeals) {
-                    solveBankDeals(bankDeals);
+                    if (isViewAttached()) {
+                        solveBankDeals(bankDeals);
+                    }
                 }
 
                 @Override
                 public void onFailure(final MercadoPagoError error) {
-                    failureRecovery = new FailureRecovery() {
-                        @Override
-                        public void recover() {
-                            getBankDeals();
-                        }
-                    };
-                    getView().showApiExceptionError(error);
+                    if (isViewAttached()) {
+                        failureRecovery = new FailureRecovery() {
+                            @Override
+                            public void recover() {
+                                getBankDeals();
+                            }
+                        };
+                        getView().showApiExceptionError(error);
+                    }
                 }
             });
     }
 
     @Override
     public void solveBankDeals(@NonNull final List<BankDeal> bankDeals) {
-        getView().showBankDeals(bankDeals, getOnSelectedCallback());
+        getView().showBankDeals(bankDeals, this);
     }
 
     @Override
@@ -76,5 +72,10 @@ public class BankDealsPresenter extends BasePresenter<BankDealsView> implements 
         if (failureRecovery != null) {
             failureRecovery.recover();
         }
+    }
+
+    @Override
+    public void onSelected(final BankDeal bankDeal) {
+        getView().showBankDealDetail(bankDeal);
     }
 }

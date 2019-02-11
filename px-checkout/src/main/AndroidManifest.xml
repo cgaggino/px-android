@@ -19,7 +19,7 @@
             android:label="@string/px_title_activity_payment_methods"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
-            android:name=".internal.features.BankDealsActivity"
+            android:name=".internal.features.bank_deals.BankDealsActivity"
             android:label="@string/px_title_activity_bank_deals"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
