@@ -12,7 +12,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.tracking.internal.views.BankDealsViewTracker;
 import java.util.List;
 
-/* default */ class BankDealsPresenter extends BasePresenter<BankDeals.View> implements BankDeals.Actions {
+/* default */ class BankDealsPresenter extends BasePresenter<BankDeals.View>
+    implements BankDeals.Actions, OnSelectedCallback<BankDeal> {
 
     private FailureRecovery failureRecovery;
     private BankDealsRepository bankDealsRepository;
@@ -31,15 +32,6 @@ import java.util.List;
     public void trackView() {
         final BankDealsViewTracker bankDealsViewTracker = new BankDealsViewTracker();
         setCurrentViewTracker(bankDealsViewTracker);
-    }
-
-    private OnSelectedCallback<BankDeal> getOnSelectedCallback() {
-        return new OnSelectedCallback<BankDeal>() {
-            @Override
-            public void onSelected(final BankDeal bankDeal) {
-                getView().showBankDealDetail(bankDeal);
-            }
-        };
     }
 
     @Override
@@ -68,7 +60,7 @@ import java.util.List;
 
     @Override
     public void solveBankDeals(@NonNull final List<BankDeal> bankDeals) {
-        getView().showBankDeals(bankDeals, getOnSelectedCallback());
+        getView().showBankDeals(bankDeals, this);
     }
 
     @Override
@@ -76,5 +68,10 @@ import java.util.List;
         if (failureRecovery != null) {
             failureRecovery.recover();
         }
+    }
+
+    @Override
+    public void onSelected(final BankDeal bankDeal) {
+        getView().showBankDealDetail(bankDeal);
     }
 }
