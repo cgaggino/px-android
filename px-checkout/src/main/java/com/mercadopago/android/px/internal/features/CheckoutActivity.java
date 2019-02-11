@@ -36,7 +36,6 @@ import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.tracking.internal.events.FinishCheckoutEventTracker;
-import com.mercadopago.android.px.tracking.internal.events.AbortOneTapEventTracker;
 import com.mercadopago.android.px.tracking.internal.events.FrictionEventTracker;
 
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
@@ -147,9 +146,6 @@ public class CheckoutActivity extends PXActivity implements CheckoutView, Expres
 
     @Override
     public void onBackPressed() {
-        if (presenter != null && presenter.getState().isExpressCheckout) {
-            new AbortOneTapEventTracker().track();
-        }
         super.onBackPressed();
     }
 

@@ -5,10 +5,6 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
 
-/**
- * Created by vaserber on 10/26/16.
- */
-
 public interface SecurityCodeActivityView extends MvpView {
     void setSecurityCodeInputMaxLength(int length);
 
@@ -17,6 +13,8 @@ public interface SecurityCodeActivityView extends MvpView {
     void setErrorView(CardTokenException exception);
 
     void clearErrorView();
+
+    void onBackButtonPressed();
 
     void showLoadingView();
 
@@ -33,4 +31,6 @@ public interface SecurityCodeActivityView extends MvpView {
     void showBackSecurityCodeCardView();
 
     void showFrontSecurityCodeCardView();
+
+    void showStandardErrorMessage();
 }

@@ -1,42 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:id="@+id/headerContainer"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:gravity="center"
-              android:orientation="vertical"
-              android:paddingEnd="@dimen/px_m_alternative_margin"
-              android:paddingLeft="@dimen/px_m_alternative_margin"
-              android:paddingRight="@dimen/px_m_alternative_margin"
-              android:paddingStart="@dimen/px_m_alternative_margin"
-              android:paddingBottom="@dimen/px_xxxl_margin"
-              tools:background="@color/ui_components_success_color">
+<FrameLayout android:id="@+id/headerContainer"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             tools:background="@color/ui_components_success_color">
 
-    <FrameLayout
-        android:id="@+id/iconContainer"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px_toolbar_height"
+        android:theme="@style/ToolbarTransparentTheme"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/px_xxxl_margin"/>
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/px_xxxl_margin">
 
-    <com.mercadopago.android.px.internal.view.MPTextView
-        android:id="@+id/mpsdkHeaderLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/px_xxs_margin"
-        android:gravity="center_horizontal"
-        android:textColor="@color/px_white"
-        android:textSize="@dimen/px_s_text"
-        tools:text="Lorem ipsum dolor sit"/>
+        <FrameLayout
+            android:id="@+id/iconContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/px_xxxl_margin"
+            android:paddingEnd="@dimen/px_m_alternative_margin"
+            android:paddingLeft="@dimen/px_m_alternative_margin"
+            android:paddingRight="@dimen/px_m_alternative_margin"
+            android:paddingStart="@dimen/px_m_alternative_margin"/>
 
-    <com.mercadopago.android.px.internal.view.MPTextView
-        android:id="@+id/mpsdkHeaderTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/px_s_margin"
-        android:gravity="center_horizontal"
-        android:textColor="@color/px_white"
-        android:textSize="@dimen/px_xxxl_text"
-        tools:text="¡Listo, se acreditó tu pago!"/>
+        <com.mercadopago.android.px.internal.view.MPTextView
+            android:id="@+id/mpsdkHeaderLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/px_xs_margin"
+            android:layout_marginRight="@dimen/px_xs_margin"
+            android:layout_marginTop="@dimen/px_xxs_margin"
+            android:gravity="center_horizontal"
+            android:textColor="@color/px_white"
+            android:textSize="@dimen/px_s_text"
+            tools:text="Lorem ipsum dolor sit Lorem ipsum dolor sit Lorem ipsum dolor sit "/>
 
-</LinearLayout>
+        <com.mercadopago.android.px.internal.view.MPTextView
+            android:id="@+id/mpsdkHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/px_xs_margin"
+            android:layout_marginRight="@dimen/px_xs_margin"
+            android:layout_marginTop="@dimen/px_s_margin"
+            android:gravity="center_horizontal"
+            android:textColor="@color/px_white"
+            android:textSize="@dimen/px_xxxl_text"
+            tools:text="¡Listo, se acreditó tu pago! Lorem ipsum dolor sit  Lorem ipsum dolor sit"/>
+
+    </LinearLayout>
+
+</FrameLayout>

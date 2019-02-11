@@ -616,6 +616,8 @@ public final class ReviewAndConfirmActivity extends PXActivity<ReviewAndConfirmP
 
     @Override
     public void onAnimationFinished() {
+        //we attach the view here for fix bug 5bda1d3f5de03a001b24f69a reported in bugsnag
+        presenter.attachView(this);
         presenter.hasFinishPaymentAnimation();
     }
 

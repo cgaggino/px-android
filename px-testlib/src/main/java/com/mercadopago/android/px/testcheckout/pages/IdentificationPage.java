@@ -40,6 +40,12 @@ public class IdentificationPage extends PageObject<CheckoutValidator> {
         return new IssuerPage(validator);
     }
 
+    public CardAssociationResultSuccessPage enterIdentificationNumberToCardAssociationResultSuccessPage(
+        final String idNumber) {
+        insertIdAndPressNext(idNumber);
+        return new CardAssociationResultSuccessPage(validator);
+    }
+
     private void insertIdAndPressNext(final String idNumber) {
         Matcher<View> cardIdentificationNumberEditTextMatcher =
             withId(com.mercadopago.android.px.R.id.mpsdkCardIdentificationNumber);

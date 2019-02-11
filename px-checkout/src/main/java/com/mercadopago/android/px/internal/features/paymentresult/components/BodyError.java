@@ -1,77 +1,86 @@
 package com.mercadopago.android.px.internal.features.paymentresult.components;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultProvider;
+import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.paymentresult.props.BodyErrorProps;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.RecoverPaymentAction;
 import com.mercadopago.android.px.model.Payment;
 
-/**
- * Created by vaserber on 27/11/2017.
- */
-
 public class BodyError extends Component<BodyErrorProps, Void> {
 
-    public PaymentResultProvider resourcesProvider;
-
-    public BodyError(@NonNull BodyErrorProps props, @NonNull ActionDispatcher dispatcher,
-        @NonNull final PaymentResultProvider provider) {
+    public BodyError(@NonNull final BodyErrorProps props,
+        @NonNull final ActionDispatcher dispatcher) {
         super(props, dispatcher);
-        resourcesProvider = provider;
     }
 
-    public String getTitle() {
-        String title = "";
+    public String getTitle(final Context context) {
         if (isRejectedWithTitle() || isPendingWithTitle()) {
-            title = resourcesProvider.getErrorTitle();
+            return context.getString(R.string.px_what_can_do);
         }
-        return title;
+        return TextUtil.EMPTY;
     }
 
-    public String getDescription() {
-        String description = "";
-        if (props.status.equals(Payment.StatusCodes.STATUS_PENDING) ||
-            props.status.equals(Payment.StatusCodes.STATUS_IN_PROCESS)) {
-            if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_PENDING_CONTINGENCY)) {
-                description = resourcesProvider.getPendingContingencyBodyErrorDescription();
-            } else if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_PENDING_REVIEW_MANUAL)) {
-                description = resourcesProvider.getPendingReviewManualBodyErrorDescription();
-            }
-        } else if (props.status.equals(Payment.StatusCodes.STATUS_REJECTED)) {
-            if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE)) {
-                description = resourcesProvider.getRejectedCallForAuthBodyErrorDescription();
-            } else if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CARD_DISABLED)) {
-                description = resourcesProvider.getRejectedCardDisabledBodyErrorDescription(props.paymentMethodName);
-            } else if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_INSUFFICIENT_AMOUNT)) {
-                description = resourcesProvider.getRejectedInsufficientAmountBodyErrorDescription();
-            } else if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_OTHER_REASON)) {
-                description = resourcesProvider.getRejectedOtherReasonBodyErrorDescription();
-            } else if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_BY_BANK)) {
-                description = resourcesProvider.getRejectedByBankBodyErrorDescription();
-            } else if (props.statusDetail
-                .equals(Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA)) {
-                description = resourcesProvider.getRejectedInsufficientDataBodyErrorDescription();
-            } else if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_DUPLICATED_PAYMENT)) {
-                description = resourcesProvider.getRejectedDuplicatedPaymentBodyErrorDescription();
-            } else if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_MAX_ATTEMPTS)) {
-                description = resourcesProvider.getRejectedMaxAttemptsBodyErrorDescription();
-            } else if (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_REJECTED_HIGH_RISK)) {
-                description = resourcesProvider.getRejectedHighRiskBodyErrorDescription();
-            }
+    public String getDescription(final Context context) {
+        switch (props.status) {
+        case Payment.StatusCodes.STATUS_PENDING:
+        case Payment.StatusCodes.STATUS_IN_PROCESS:
+            return getPendingOrInProcessDescription(context);
+        case Payment.StatusCodes.STATUS_REJECTED:
+            return getRejectedDescription(context);
+        default:
+            return TextUtil.EMPTY;
         }
-
-        return description;
     }
 
-    public String getSecondDescription() {
-        String secondDescription = "";
+    @NonNull
+    private String getPendingOrInProcessDescription(final Context context) {
+        switch (props.statusDetail) {
+        case Payment.StatusDetail.STATUS_DETAIL_PENDING_CONTINGENCY:
+            return context.getString(R.string.px_error_description_contingency);
+        case Payment.StatusDetail.STATUS_DETAIL_PENDING_REVIEW_MANUAL:
+            return context.getString(R.string.px_error_description_review_manual);
+        default:
+            return TextUtil.EMPTY;
+        }
+    }
+
+    private String getRejectedDescription(final Context context) {
+        switch (props.statusDetail) {
+        case Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE:
+            return context.getString(R.string.px_error_description_call);
+        case Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CARD_DISABLED:
+            return context.getString(R.string.px_error_description_card_disabled, props.paymentMethodName);
+        case Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_INSUFFICIENT_AMOUNT:
+            return context.getString(R.string.px_error_description_insufficient_amount);
+        case Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_OTHER_REASON:
+            return context.getString(R.string.px_error_description_other_reason);
+        case Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_BY_BANK:
+            return context.getString(R.string.px_error_description_by_bank);
+        case Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA:
+            return context.getString(R.string.px_error_description_insufficient_data);
+        case Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_DUPLICATED_PAYMENT:
+            return context.getString(R.string.px_error_description_duplicated_payment);
+        case Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_MAX_ATTEMPTS:
+            return context.getString(R.string.px_error_description_max_attempts);
+        case Payment.StatusDetail.STATUS_DETAIL_REJECTED_HIGH_RISK:
+            return context.getString(R.string.px_error_description_high_risk);
+        case Payment.StatusDetail.STATUS_DETAIL_REJECTED_BY_REGULATIONS:
+            return context.getString(R.string.px_error_description_rejected_by_regulations);
+        default:
+            return TextUtil.EMPTY;
+        }
+    }
+
+    public String getSecondDescription(final Context context) {
         if (props.status.equals(Payment.StatusCodes.STATUS_REJECTED) &&
             props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_INSUFFICIENT_AMOUNT)) {
-            secondDescription = resourcesProvider.getRejectedInsufficientAmountBodyErrorSecondDescription();
+            return context.getString(R.string.px_error_description_second_insufficient_amount);
         }
-        return secondDescription;
+        return TextUtil.EMPTY;
     }
 
     private boolean isRejectedWithTitle() {
@@ -93,10 +102,6 @@ public class BodyError extends Component<BodyErrorProps, Void> {
                 props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_PENDING_REVIEW_MANUAL)));
     }
 
-    public String getActionText() {
-        return resourcesProvider.getRejectedCallForAuthBodyActionText(props.paymentMethodName);
-    }
-
     private boolean isCallForAuthorize() {
         return props.status.equals(Payment.StatusCodes.STATUS_REJECTED)
             && (props.statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE));
@@ -106,11 +111,7 @@ public class BodyError extends Component<BodyErrorProps, Void> {
         return isCallForAuthorize() && props.paymentMethodName != null && !props.paymentMethodName.isEmpty();
     }
 
-    public String getSecondaryTitleForCallForAuth() {
-        return resourcesProvider.getRejectedCallForAuthBodySecondaryTitle();
-    }
-
-    public void recoverPayment() {
+    /* default */ void recoverPayment() {
         getDispatcher().dispatch(new RecoverPaymentAction());
     }
 }

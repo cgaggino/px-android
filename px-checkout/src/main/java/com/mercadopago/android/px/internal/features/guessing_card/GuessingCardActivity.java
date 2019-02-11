@@ -30,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.IdentificationTypesAdapter;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.callbacks.PaymentMethodSelectionCallback;
 import com.mercadopago.android.px.internal.callbacks.card.CardExpiryDateEditTextCallback;
 import com.mercadopago.android.px.internal.callbacks.card.CardIdentificationNumberEditTextCallback;
@@ -40,7 +41,6 @@ import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingCont
 import com.mercadopago.android.px.internal.di.CardAssociationSession;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.Constants;
-import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.features.ReviewPaymentMethodsActivity;
 import com.mercadopago.android.px.internal.features.card.CardExpiryDateTextWatcher;
 import com.mercadopago.android.px.internal.features.card.CardIdentificationNumberTextWatcher;
@@ -156,12 +156,17 @@ public class GuessingCardActivity extends PXActivity<GuessingCardPresenter> impl
      * @param accessToken: user accessToken
      * @param requestCode: the caller request code
      */
-    public static void startGuessingCardActivityForStorage(final Activity callerActivity, final String accessToken,
+    public static void startGuessingCardActivityForStorage(final Context callerActivity, final String accessToken,
         final int requestCode) {
         final Intent intent = new Intent(callerActivity, GuessingCardActivity.class);
         intent.putExtra(PARAM_ACCESS_TOKEN, accessToken);
         intent.putExtra(GuessingCardActivity.PARAM_INCLUDES_PAYMENT, false);
-        callerActivity.startActivityForResult(intent, requestCode);
+        if (callerActivity instanceof Activity) {
+            ((Activity) callerActivity).startActivityForResult(intent, requestCode);
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            callerActivity.startActivity(intent);
+        }
     }
 
     /**

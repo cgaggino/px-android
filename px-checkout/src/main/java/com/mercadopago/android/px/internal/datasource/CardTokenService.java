@@ -7,7 +7,10 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.Device;
+import com.mercadopago.android.px.model.SavedCardToken;
+import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.requests.SecurityCodeIntent;
 
 public class CardTokenService implements CardTokenRepository {
 
@@ -28,5 +31,36 @@ public class CardTokenService implements CardTokenRepository {
         cardToken.setDevice(device);
         return gatewayService
             .createToken(paymentSettingRepository.getPublicKey(), paymentSettingRepository.getPrivateKey(), cardToken);
+    }
+
+    @Override
+    public MPCall<Token> createToken(final SavedCardToken savedCardToken) {
+        savedCardToken.setDevice(device);
+        return gatewayService
+            .createToken(paymentSettingRepository.getPublicKey(), paymentSettingRepository.getPrivateKey(),
+                savedCardToken);
+    }
+
+    @Override
+    public MPCall<Token> createToken(final SavedESCCardToken savedESCCardToken) {
+        savedESCCardToken.setDevice(device);
+        return gatewayService
+            .createToken(paymentSettingRepository.getPublicKey(), paymentSettingRepository.getPrivateKey(),
+                savedESCCardToken);
+    }
+
+    @Override
+    public MPCall<Token> cloneToken(final String tokenId) {
+        return gatewayService
+            .cloneToken(tokenId, paymentSettingRepository.getPublicKey(), paymentSettingRepository.getPrivateKey());
+    }
+
+    @Override
+    public MPCall<Token> putSecurityCode(final String securityCode, final String tokenId) {
+        final SecurityCodeIntent securityCodeIntent = new SecurityCodeIntent();
+        securityCodeIntent.setSecurityCode(securityCode);
+        return gatewayService
+            .updateToken(tokenId, paymentSettingRepository.getPublicKey(), paymentSettingRepository.getPrivateKey(),
+                securityCodeIntent);
     }
 }

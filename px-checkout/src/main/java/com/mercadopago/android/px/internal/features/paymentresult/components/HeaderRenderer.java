@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -27,6 +30,17 @@ public class HeaderRenderer extends Renderer<Header> {
         final MPTextView labelTextView = headerView.findViewById(R.id.mpsdkHeaderLabel);
         final int background = ContextCompat.getColor(context, component.props.background);
         final int statusBarColor = ContextCompat.getColor(context, component.props.statusBarColor);
+
+        final Toolbar toolbar = headerView.findViewById(R.id.toolbar);
+        if (context instanceof AppCompatActivity) {
+            final AppCompatActivity appCompatActivity = (AppCompatActivity) context;
+            appCompatActivity.setSupportActionBar(toolbar);
+            final ActionBar supportActionBar = appCompatActivity.getSupportActionBar();
+            supportActionBar.setHomeAsUpIndicator(R.drawable.ic_close);
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
+            toolbar.setNavigationOnClickListener(v -> appCompatActivity.onBackPressed());
+        }
 
         //Render height
         if (component.props.height.equals(HeaderProps.HEADER_MODE_WRAP)) {

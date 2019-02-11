@@ -2,6 +2,8 @@ package com.mercadopago.android.px.testcheckout.assertions;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.testcheckout.pages.CallForAuthPage;
+import com.mercadopago.android.px.testcheckout.pages.CardAssociationResultErrorPage;
+import com.mercadopago.android.px.testcheckout.pages.CardAssociationResultSuccessPage;
 import com.mercadopago.android.px.testcheckout.pages.CardPage;
 import com.mercadopago.android.px.testcheckout.pages.CashPage;
 import com.mercadopago.android.px.testcheckout.pages.CongratsPage;
@@ -70,7 +72,11 @@ public interface CheckoutValidator extends Validator {
 
     void validate(@NonNull final RejectedPage rejectedPage);
 
-    void validate(ExpressPaymentPage expressPaymentPage);
+    void validate(@NonNull final ExpressPaymentPage expressPaymentPage);
+
+    void validate(@NonNull final CardAssociationResultSuccessPage cardAssociationResultSuccessPage);
+
+    void validate(@NonNull final CardAssociationResultErrorPage cardAssociationResultSuccessPage);
 
     /**
      * @deprecated this page does not exists anymore.

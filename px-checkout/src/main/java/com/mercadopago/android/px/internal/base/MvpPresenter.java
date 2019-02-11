@@ -1,6 +1,5 @@
 package com.mercadopago.android.px.internal.base;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import java.lang.ref.WeakReference;
 
@@ -32,14 +31,6 @@ public abstract class MvpPresenter<V extends MvpView, R extends ResourcesProvide
             mView.clear();
             mView = null;
         }
-    }
-
-    public void fromBundle(@NonNull final Bundle bundle) {
-    }
-
-    @NonNull
-    public Bundle toBundle(@NonNull final Bundle bundle) {
-        return bundle;
     }
 
     public boolean isViewAttached() {

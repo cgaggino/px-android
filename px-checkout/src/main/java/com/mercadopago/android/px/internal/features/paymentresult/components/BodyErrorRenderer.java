@@ -11,10 +11,6 @@ import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
 
-/**
- * Created by vaserber on 27/11/2017.
- */
-
 public class BodyErrorRenderer extends Renderer<BodyError> {
 
     @Override
@@ -30,11 +26,11 @@ public class BodyErrorRenderer extends Renderer<BodyError> {
         final MPTextView secondaryTitleTextView = bodyErrorView.findViewById(R.id.bodyErrorSecondaryTitle);
         final View bottomDivider = bodyErrorView.findViewById(R.id.bodyErrorBottomDivider);
 
-        setText(titleTextView, component.getTitle());
-        setText(descriptionTextView, component.getDescription());
-        setText(secondDescriptionTextView, component.getSecondDescription());
+        setText(titleTextView, component.getTitle(context));
+        setText(descriptionTextView, component.getDescription(context));
+        setText(secondDescriptionTextView, component.getSecondDescription(context));
 
-        if (component.getTitle().isEmpty()) {
+        if (component.getTitle(context).isEmpty()) {
             final LinearLayout.LayoutParams params =
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -44,18 +40,15 @@ public class BodyErrorRenderer extends Renderer<BodyError> {
         }
 
         if (component.hasActionForCallForAuth()) {
-            actionButton.setText(component.getActionText());
+            actionButton.setText(String
+                .format(context.getString(R.string.px_text_authorized_call_for_authorize),
+                    component.props.paymentMethodName));
             actionButton.setVisibility(View.VISIBLE);
             middleDivider.setVisibility(View.VISIBLE);
-            secondaryTitleTextView.setText(component.getSecondaryTitleForCallForAuth());
+            secondaryTitleTextView.setText(R.string.px_error_secondary_title_call);
             secondaryTitleTextView.setVisibility(View.VISIBLE);
             bottomDivider.setVisibility(View.VISIBLE);
-            actionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    component.recoverPayment();
-                }
-            });
+            actionButton.setOnClickListener(v -> component.recoverPayment());
         } else {
             actionButton.setVisibility(View.GONE);
             middleDivider.setVisibility(View.GONE);

@@ -7,7 +7,6 @@ import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.features.PaymentVaultPresenter;
 import com.mercadopago.android.px.internal.features.PaymentVaultView;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
-import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -93,19 +92,6 @@ public class PaymentVaultPresenterTest {
     @NonNull
     private PaymentVaultPresenter getPresenter() {
         return getBasePresenter(view);
-    }
-
-    @Test
-    public void whenItemSelectedAvailableTrackIt() {
-        final PaymentVaultView mockView = mock(PaymentVaultView.class);
-        final PaymentVaultProvider mockProvider = mock(PaymentVaultProvider.class);
-        final PaymentMethodSearchItem mockPaymentOptions = mock(PaymentMethodSearchItem.class);
-
-        presenter.attachView(mockView);
-        presenter.setSelectedSearchItem(mockPaymentOptions);
-        presenter.trackScreen();
-        verifyNoMoreInteractions(mockProvider);
-        verifyNoMoreInteractions(mockView);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.core.internal;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardActivity;
@@ -25,13 +26,13 @@ public final class MercadoPagoCardStorage {
      * In case the flow experiences an error of any kind, the flow will return a {@link Activity#RESULT_CANCELED}
      * informing that the card association failed.
      *
-     * @param callerActivity the activity that calls the flow
+     * @param context the context that calls the flow
      * @param accessToken logged in user access token
      * @param requestCode it's the number that identifies the checkout flow request for
      * {@link Activity#onActivityResult(int, int, Intent)}
      */
-    public static void startCardStorageFlow(@NonNull final Activity callerActivity, @NonNull final String accessToken,
+    public static void startCardStorageFlow(@NonNull final Context context, @NonNull final String accessToken,
         final int requestCode) {
-        GuessingCardActivity.startGuessingCardActivityForStorage(callerActivity, accessToken, requestCode);
+        GuessingCardActivity.startGuessingCardActivityForStorage(context, accessToken, requestCode);
     }
 }

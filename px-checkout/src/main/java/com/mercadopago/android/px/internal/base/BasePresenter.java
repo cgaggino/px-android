@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.internal.base;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.tracking.internal.TrackingContract;
@@ -39,6 +40,14 @@ public class BasePresenter<V extends MvpView> {
             }
         }
     };
+
+    public void recoverFromBundle(@NonNull final Bundle bundle) {
+    }
+
+    @NonNull
+    public Bundle storeInBundle(@NonNull final Bundle bundle) {
+        return bundle;
+    }
 
     public void attachView(final V view) {
         mView = new WeakReference<>(view);

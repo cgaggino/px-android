@@ -51,7 +51,7 @@
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
             android:name=".internal.features.paymentresult.PaymentResultActivity"
-            android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
+            android:theme="@style/ToolbarTransparentTheme"/>
         <activity
             android:name=".internal.features.SecurityCodeActivity"
             android:screenOrientation="portrait"
@@ -86,10 +86,10 @@
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
             android:name=".internal.features.guessing_card.card_association_result.CardAssociationResultSuccessActivity"
-            android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
+            android:theme="@style/ToolbarTransparentTheme"/>
         <activity
             android:name=".internal.features.guessing_card.card_association_result.CardAssociationResultErrorActivity"
-            android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
+            android:theme="@style/ToolbarTransparentTheme"/>
     </application>
 
 </manifest>

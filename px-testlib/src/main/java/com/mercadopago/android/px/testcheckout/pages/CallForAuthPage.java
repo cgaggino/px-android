@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.testcheckout.pages;
 
+import android.support.test.espresso.action.ViewActions;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.testcheckout.assertions.CheckoutValidator;
 import com.mercadopago.android.testlib.pages.PageObject;
@@ -7,8 +8,8 @@ import com.mercadopago.android.testlib.pages.PageObject;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class CallForAuthPage extends PageObject<CheckoutValidator> {
 
@@ -20,7 +21,7 @@ public class CallForAuthPage extends PageObject<CheckoutValidator> {
         super(validator);
     }
 
-    public SecurityCodeToResultsPage pressAlreadyAuthorizedButton(){
+    public SecurityCodeToResultsPage pressAlreadyAuthorizedButton() {
         onView(withId(R.id.paymentResultBodyErrorAction)).perform(click());
         return new SecurityCodeToResultsPage(validator);
     }
@@ -37,7 +38,7 @@ public class CallForAuthPage extends PageObject<CheckoutValidator> {
     }
 
     public NoCheckoutPage pressCancelButton() {
-        onView(withText(R.string.px_cancel_payment)).perform(scrollTo(), click());
+        onView(isRoot()).perform(ViewActions.pressBack());
         return new NoCheckoutPage(validator);
     }
 }

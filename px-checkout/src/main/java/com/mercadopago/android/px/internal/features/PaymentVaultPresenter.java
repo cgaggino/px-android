@@ -15,6 +15,7 @@ import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.AmountView;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
@@ -75,7 +76,7 @@ public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
             validateParameters();
             initPaymentVaultFlow();
         } catch (final IllegalStateException exception) {
-            getView().showError(MercadoPagoError.createNotRecoverable(exception.getMessage()), "");
+            getView().showError(MercadoPagoError.createNotRecoverable(exception.getMessage()), TextUtil.EMPTY);
         }
     }
 

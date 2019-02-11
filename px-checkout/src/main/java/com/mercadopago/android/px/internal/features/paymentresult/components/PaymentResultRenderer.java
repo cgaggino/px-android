@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.internal.features.paymentresult.components;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mercadopago.android.px.R;
@@ -10,11 +11,12 @@ import com.mercadopago.android.px.internal.view.RendererFactory;
 public class PaymentResultRenderer extends Renderer<PaymentResultContainer> {
 
     @Override
-    public View render(final PaymentResultContainer component, final Context context, final ViewGroup parent) {
+    public View render(@NonNull final PaymentResultContainer component, @NonNull final Context context,
+        final ViewGroup parent) {
+
         final View view;
 
         if (component.isLoading()) {
-
             view = RendererFactory.create(context, component.getLoadingComponent()).render(parent);
         } else {
 
@@ -27,8 +29,7 @@ public class PaymentResultRenderer extends Renderer<PaymentResultContainer> {
                 RendererFactory.create(context, component.getBodyComponent()).render(parentViewGroup);
             }
 
-            View footer = RendererFactory.create(context, component.getFooterContainer()).render(parentViewGroup);
-            parentViewGroup.addView(footer);
+            parentViewGroup.addView(component.getFooterContainer().render(parentViewGroup));
         }
 
         return view;

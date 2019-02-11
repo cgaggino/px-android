@@ -2,8 +2,7 @@ package com.mercadopago.android.px.internal.features.express;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.base.MvpPresenter;
-import com.mercadopago.android.px.internal.base.ResourcesProvider;
+import com.mercadopago.android.px.internal.base.BasePresenter;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecoratorMapper;
 import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.SplitPaymentHeaderAdapter;
@@ -37,7 +36,6 @@ import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.services.Callback;
-import com.mercadopago.android.px.tracking.internal.events.AbortOneTapEventTracker;
 import com.mercadopago.android.px.tracking.internal.events.ConfirmEvent;
 import com.mercadopago.android.px.tracking.internal.events.FrictionEventTracker;
 import com.mercadopago.android.px.tracking.internal.events.InstallmentsEventTrack;
@@ -46,7 +44,7 @@ import com.mercadopago.android.px.tracking.internal.views.OneTapViewTracker;
 import java.util.Collections;
 import java.util.List;
 
-/* default */ class ExpressPaymentPresenter extends MvpPresenter<ExpressPayment.View, ResourcesProvider>
+/* default */ class ExpressPaymentPresenter extends BasePresenter<ExpressPayment.View>
     implements ExpressPayment.Actions,
     AmountDescriptorView.OnClickListenerWithDiscount {
 
@@ -146,14 +144,14 @@ import java.util.List;
     }
 
     @Override
-    public void fromBundle(@NonNull final Bundle bundle) {
+    public void recoverFromBundle(@NonNull final Bundle bundle) {
         payerCostSelection = bundle.getParcelable(BUNDLE_STATE_PAYER_COST);
         isSplitUserPreference = bundle.getBoolean(BUNDLE_STATE_SPLIT_PREF, false);
     }
 
     @NonNull
     @Override
-    public Bundle toBundle(@NonNull final Bundle bundle) {
+    public Bundle storeInBundle(@NonNull final Bundle bundle) {
         bundle.putParcelable(BUNDLE_STATE_PAYER_COST, payerCostSelection);
         bundle.putBoolean(BUNDLE_STATE_SPLIT_PREF, isSplitUserPreference);
         return bundle;
@@ -161,10 +159,10 @@ import java.util.List;
 
     @Override
     public void trackExpressView() {
-        new OneTapViewTracker(expressMetadataList,
+        final OneTapViewTracker oneTapViewTracker = new OneTapViewTracker(expressMetadataList,
             paymentConfiguration.getCheckoutPreference(),
-            discountRepository.getCurrentConfiguration())
-            .track();
+            discountRepository.getCurrentConfiguration());
+        setCurrentViewTracker(oneTapViewTracker);
     }
 
     @Override
@@ -202,7 +200,7 @@ import java.util.List;
 
     @Override
     public void cancel() {
-        new AbortOneTapEventTracker().track();
+        tracker.trackAbort();
         getView().cancel();
     }
 

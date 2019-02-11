@@ -30,12 +30,9 @@ public class CardAssociationResultSuccessActivity extends AppCompatActivity {
             .setupStatusBarColor(ContextCompat.getColor(this, R.color.px_green_status_bar));
 
         final MeliButton exitButton = findViewById(R.id.mpsdkCardAssociationResultExitButton);
-        exitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                setResult(RESULT_OK);
-                finish();
-            }
+        exitButton.setOnClickListener(v -> {
+            setResult(RESULT_OK);
+            finish();
         });
 
         new CardAssociationResultViewTrack(CardAssociationResultViewTrack.Type.SUCCESS).track();

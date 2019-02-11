@@ -19,7 +19,7 @@ public class CreditCardPage extends PageObject<CheckoutValidator> {
         // This constructor is intentionally empty. Nothing special is needed here.
     }
 
-    public CreditCardPage(CheckoutValidator validator) {
+    public CreditCardPage(final CheckoutValidator validator) {
         super(validator);
     }
 

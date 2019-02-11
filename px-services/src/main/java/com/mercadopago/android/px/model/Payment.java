@@ -430,6 +430,7 @@ public final class Payment implements IPayment, IPaymentDescriptor {
         public static final String STATUS_DETAIL_CC_REJECTED_MAX_ATTEMPTS = "cc_rejected_max_attempts";
         public static final String STATUS_DETAIL_REJECTED_REJECTED_BY_BANK = "rejected_by_bank";
         public static final String STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA = "rejected_insufficient_data";
+        public static final String STATUS_DETAIL_REJECTED_BY_REGULATIONS = "rejected_by_regulations";
 
         public static boolean isKnownErrorDetail(final String statusDetail) {
             return STATUS_DETAIL_CC_REJECTED_BAD_FILLED_OTHER.equals(statusDetail)
@@ -444,7 +445,8 @@ public final class Payment implements IPayment, IPaymentDescriptor {
                 || STATUS_DETAIL_INVALID_ESC.equals(statusDetail)
                 || STATUS_DETAIL_REJECTED_HIGH_RISK.equals(statusDetail)
                 || STATUS_DETAIL_REJECTED_REJECTED_BY_BANK.equals(statusDetail)
-                || STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA.equals(statusDetail);
+                || STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA.equals(statusDetail)
+                || STATUS_DETAIL_REJECTED_BY_REGULATIONS.equals(statusDetail);
         }
 
         public static boolean isPaymentStatusRecoverable(final String statusDetail) {
@@ -469,14 +471,10 @@ public final class Payment implements IPayment, IPaymentDescriptor {
         }
 
         public static boolean isBadFilled(final String statusDetail) {
-            return STATUS_DETAIL_CC_REJECTED_BAD_FILLED_DATE
-                .equals(statusDetail)
-                || STATUS_DETAIL_CC_REJECTED_BAD_FILLED_SECURITY_CODE
-                .equals(statusDetail)
-                || STATUS_DETAIL_CC_REJECTED_BAD_FILLED_OTHER
-                .equals(statusDetail)
-                || STATUS_DETAIL_CC_REJECTED_BAD_FILLED_CARD_NUMBER
-                .equals(statusDetail);
+            return STATUS_DETAIL_CC_REJECTED_BAD_FILLED_DATE.equals(statusDetail)
+                || STATUS_DETAIL_CC_REJECTED_BAD_FILLED_SECURITY_CODE.equals(statusDetail)
+                || STATUS_DETAIL_CC_REJECTED_BAD_FILLED_OTHER.equals(statusDetail)
+                || STATUS_DETAIL_CC_REJECTED_BAD_FILLED_CARD_NUMBER.equals(statusDetail);
         }
     }
 }

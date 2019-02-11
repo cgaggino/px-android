@@ -1,21 +1,25 @@
 package com.mercadopago.android.px.internal.features.paymentresult;
 
+import android.content.Context;
+import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.features.paymentresult.components.BodyError;
+import com.mercadopago.android.px.internal.features.paymentresult.props.BodyErrorProps;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.mocks.PaymentResults;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.internal.features.paymentresult.components.BodyError;
-import com.mercadopago.android.px.internal.features.paymentresult.props.BodyErrorProps;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by vaserber on 29/11/2017.
- */
-
+@RunWith(MockitoJUnitRunner.class)
 public class BodyErrorTest {
 
     private static final String ERROR_TITLE = "error_title";
@@ -27,200 +31,179 @@ public class BodyErrorTest {
     private static final String REJECTED_OTHER_REASON_DESCRIPTION = "rejected_other_reason_description";
     private static final String REJECTED_INSUFFICIENT_DATA = "insufficient_data_description";
     private static final String DUPLICATED_DESCRIPTION = "duplicated_description";
-    private static final String CALL_FOR_AUTH_ACTION = "call_for_auth_action";
-    private static final String CALL_FOR_AUTH_SECOND_TITLE = "call_for_auth_second_title";
 
-    private ActionDispatcher dispatcher;
-    private PaymentResultProvider provider;
+    @Mock private ActionDispatcher dispatcher;
+    @Mock private Context context;
 
     @Before
     public void setup() {
         dispatcher = mock(ActionDispatcher.class);
-        provider = mock(PaymentResultProvider.class);
+        when(context.getString(R.string.px_error_description_contingency)).thenReturn(CONTINGENCY_DESCRIPTION);
+        when(context.getString(R.string.px_error_description_review_manual)).thenReturn(REVIEW_MANUAL_DESCRIPTION);
+        when(context.getString(R.string.px_error_description_insufficient_data)).thenReturn(REJECTED_INSUFFICIENT_DATA);
+        when(context.getString(R.string.px_what_can_do)).thenReturn(ERROR_TITLE);
+        when(context.getString(R.string.px_error_description_call)).thenReturn(CALL_FOR_AUTH_DESCRIPTION);
+        when(context.getString(R.string.px_error_description_insufficient_amount))
+            .thenReturn(INSUFFICIENT_AMOUNT_DESCRIPTION);
 
-        when(provider.getErrorTitle()).thenReturn(ERROR_TITLE);
-        when(provider.getPendingContingencyBodyErrorDescription()).thenReturn(CONTINGENCY_DESCRIPTION);
-        when(provider.getPendingReviewManualBodyErrorDescription()).thenReturn(REVIEW_MANUAL_DESCRIPTION);
-        when(provider.getRejectedCallForAuthBodyErrorDescription()).thenReturn(CALL_FOR_AUTH_DESCRIPTION);
-        when(provider.getRejectedInsufficientAmountBodyErrorDescription()).thenReturn(INSUFFICIENT_AMOUNT_DESCRIPTION);
-        when(provider.getRejectedInsufficientAmountBodyErrorSecondDescription())
+        when(context.getString(R.string.px_error_description_second_insufficient_amount))
             .thenReturn(INSUFFICIENT_AMOUNT_SECOND_DESCRIPTION);
-        when(provider.getRejectedOtherReasonBodyErrorDescription()).thenReturn(REJECTED_OTHER_REASON_DESCRIPTION);
-        when(provider.getRejectedInsufficientDataBodyErrorDescription()).thenReturn(REJECTED_INSUFFICIENT_DATA);
-        when(provider.getRejectedDuplicatedPaymentBodyErrorDescription()).thenReturn(DUPLICATED_DESCRIPTION);
-        when(provider.getRejectedCallForAuthBodyActionText("Mastercard")).thenReturn(CALL_FOR_AUTH_ACTION);
-        when(provider.getRejectedCallForAuthBodySecondaryTitle()).thenReturn(CALL_FOR_AUTH_SECOND_TITLE);
+        when(context.getString(R.string.px_error_description_other_reason))
+            .thenReturn(REJECTED_OTHER_REASON_DESCRIPTION);
+
+        when(context.getString(R.string.px_error_description_duplicated_payment)).thenReturn(DUPLICATED_DESCRIPTION);
     }
 
     @Test
     public void testBodyErrorTitleForCallForAuth() {
         final PaymentResult paymentResult = PaymentResults.getStatusCallForAuthPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getTitle(), ERROR_TITLE);
+        assertEquals(ERROR_TITLE, bodyError.getTitle(context));
     }
 
     @Test
     public void testBodyErrorTitleForInsufficientAmount() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedInsufficientAmountPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getTitle(), ERROR_TITLE);
+        assertEquals(ERROR_TITLE, bodyError.getTitle(context));
     }
 
     @Test
     public void testBodyErrorTitleForRejectedOther() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedOtherPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getTitle(), ERROR_TITLE);
+        assertEquals(ERROR_TITLE, bodyError.getTitle(context));
     }
 
     @Test
     public void testBodyErrorTitleForInsufficientData() {
         final PaymentResult paymentResult = PaymentResults.getBoletoRejectedPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getTitle(), ERROR_TITLE);
+        assertEquals(ERROR_TITLE, bodyError.getTitle(context));
     }
 
     @Test
     public void testBodyErrorTitleForDuplicatedPayment() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedDuplicatedPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getTitle(), "");
+        assertEquals("", bodyError.getTitle(context));
     }
 
     @Test
     public void testBodyErrorTitleForPendingContingency() {
         final PaymentResult paymentResult = PaymentResults.getStatusInProcessContingencyPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getTitle(), ERROR_TITLE);
+        assertEquals(ERROR_TITLE, bodyError.getTitle(context));
     }
 
     @Test
     public void testBodyErrorTitleOnEmptyCase() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedBadFilledFormPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), "");
+        assertEquals("", bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorDescriptionForPendingContingency() {
         final PaymentResult paymentResult = PaymentResults.getStatusInProcessContingencyPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), CONTINGENCY_DESCRIPTION);
+        assertEquals(CONTINGENCY_DESCRIPTION, bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorDescriptionForPendingReviewManual() {
         final PaymentResult paymentResult = PaymentResults.getStatusInProcessReviewManualPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), REVIEW_MANUAL_DESCRIPTION);
+        assertEquals(REVIEW_MANUAL_DESCRIPTION, bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorDescriptionForRejectedCallForAuth() {
         final PaymentResult paymentResult = PaymentResults.getStatusCallForAuthPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), CALL_FOR_AUTH_DESCRIPTION);
+        assertEquals(CALL_FOR_AUTH_DESCRIPTION, bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorDescriptionForRejectedInsufficientAmount() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedInsufficientAmountPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), INSUFFICIENT_AMOUNT_DESCRIPTION);
+        assertEquals(INSUFFICIENT_AMOUNT_DESCRIPTION, bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorSecondDescriptionForRejectedInsufficientAmount() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedInsufficientAmountPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getSecondDescription(), INSUFFICIENT_AMOUNT_SECOND_DESCRIPTION);
+        assertEquals(INSUFFICIENT_AMOUNT_SECOND_DESCRIPTION, bodyError.getSecondDescription(context));
     }
 
     @Test
     public void testBodyErrorDescriptionForRejectedOtherReason() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedOtherPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), REJECTED_OTHER_REASON_DESCRIPTION);
+        assertEquals(REJECTED_OTHER_REASON_DESCRIPTION, bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorDescriptionForRejectedInsufficientData() {
         final PaymentResult paymentResult = PaymentResults.getBoletoRejectedPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), REJECTED_INSUFFICIENT_DATA);
+        assertEquals(REJECTED_INSUFFICIENT_DATA, bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorDescriptionForRejectedDuplicatedPayment() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedDuplicatedPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), DUPLICATED_DESCRIPTION);
+        assertEquals(DUPLICATED_DESCRIPTION, bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorDescriptionOnEmptyCase() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedBadFilledFormPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
 
-        Assert.assertEquals(bodyError.getDescription(), "");
+        assertEquals("", bodyError.getDescription(context));
     }
 
     @Test
     public void testBodyErrorSecondDescriptionOnEmptyCase() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedBadFilledFormPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
-
-        Assert.assertEquals(bodyError.getSecondDescription(), "");
-    }
-
-    @Test
-    public void testBodyErrorActionTextForCallForAuth() {
-        final PaymentResult paymentResult = PaymentResults.getStatusCallForAuthPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
-
-        Assert.assertEquals(bodyError.getActionText(), CALL_FOR_AUTH_ACTION);
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
+        assertEquals("", bodyError.getSecondDescription(context));
     }
 
     @Test
     public void testBodyErrorHasActionForCallForAuth() {
         final PaymentResult paymentResult = PaymentResults.getStatusCallForAuthPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
-
-        Assert.assertTrue(bodyError.hasActionForCallForAuth());
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
+        assertTrue(bodyError.hasActionForCallForAuth());
     }
 
     @Test
     public void testBodyErrorDoestHaveActionForOtherRejected() {
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedOtherPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
-
-        Assert.assertFalse(bodyError.hasActionForCallForAuth());
+        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher);
+        assertFalse(bodyError.hasActionForCallForAuth());
     }
 
-    @Test
-    public void testBodyErrorSecondaryTitleForCallForAuth() {
-        final PaymentResult paymentResult = PaymentResults.getStatusCallForAuthPaymentResult();
-        final BodyError bodyError = new BodyError(getBodyErrorProps(paymentResult), dispatcher, provider);
-
-        Assert.assertEquals(bodyError.getSecondaryTitleForCallForAuth(), CALL_FOR_AUTH_SECOND_TITLE);
-    }
-
-    private BodyErrorProps getBodyErrorProps(PaymentResult paymentResult) {
+    private BodyErrorProps getBodyErrorProps(final PaymentResult paymentResult) {
         return new BodyErrorProps.Builder()
             .setStatus(paymentResult.getPaymentStatus())
             .setStatusDetail(paymentResult.getPaymentStatusDetail())

@@ -20,10 +20,6 @@ public interface PaymentResultProvider extends ResourcesProvider {
 
     String getRejectedBadFilledCardTitle(final String paymentMethodName);
 
-    String getRejectedCardDisabledBodyErrorDescription(String paymentMethodName);
-
-    String getRejectedCallForAuthBodyActionText(final String paymentMethodName);
-
     String getRejectedBadFilledCardTitle();
 
     String getRejectedHighRiskTitle();
@@ -36,45 +32,8 @@ public interface PaymentResultProvider extends ResourcesProvider {
 
     String getRejectedCallForAuthorizeTitle();
 
-    String getEmptyText();
-
     String getPendingLabel();
 
     String getRejectionLabel();
 
-    String getCancelPayment();
-
-    String getContinueShopping();
-
-    String getChangePaymentMethodLabel();
-
-    String getCardEnabled();
-
-    String getErrorTitle();
-
-    String getPendingContingencyBodyErrorDescription();
-
-    String getPendingReviewManualBodyErrorDescription();
-
-    String getRejectedCallForAuthBodyErrorDescription();
-
-    String getRejectedInsufficientAmountBodyErrorDescription();
-
-    String getRejectedInsufficientAmountBodyErrorSecondDescription();
-
-    String getRejectedOtherReasonBodyErrorDescription();
-
-    String getRejectedByBankBodyErrorDescription();
-
-    String getRejectedInsufficientDataBodyErrorDescription();
-
-    String getRejectedDuplicatedPaymentBodyErrorDescription();
-
-    String getRejectedMaxAttemptsBodyErrorDescription();
-
-    String getRejectedHighRiskBodyErrorDescription();
-
-    String getRejectedCallForAuthBodySecondaryTitle();
-
-    String getReceiptDescription(final Long receiptId);
 }

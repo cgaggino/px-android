@@ -18,8 +18,7 @@ public final class PaymentResultDecorator {
         return (status.equals(Payment.StatusCodes.STATUS_APPROVED) ||
             ((status.equals(Payment.StatusCodes.STATUS_IN_PROCESS) ||
                 status.equals(Payment.StatusCodes.STATUS_PENDING)) &&
-                statusDetail
-                    .equals(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT)));
+                statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT)));
     }
 
     public static boolean isErrorNonRecoverableBackground(@NonNull final IPayment payment) {
@@ -36,7 +35,8 @@ public final class PaymentResultDecorator {
                 Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_DUPLICATED_PAYMENT.equals(statusDetail) ||
                 Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_MAX_ATTEMPTS.equals(statusDetail) ||
                 Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_HIGH_RISK.equals(statusDetail) ||
-                Payment.StatusDetail.STATUS_DETAIL_REJECTED_HIGH_RISK.equals(statusDetail));
+                Payment.StatusDetail.STATUS_DETAIL_REJECTED_HIGH_RISK.equals(statusDetail) ||
+                Payment.StatusDetail.STATUS_DETAIL_REJECTED_BY_REGULATIONS.equals(statusDetail));
     }
 
     public static boolean isPendingOrErrorRecoverableBackground(@NonNull final IPayment payment) {

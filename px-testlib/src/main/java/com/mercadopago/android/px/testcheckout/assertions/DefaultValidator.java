@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
 import com.mercadopago.android.px.testcheckout.pages.CallForAuthPage;
+import com.mercadopago.android.px.testcheckout.pages.CardAssociationResultErrorPage;
+import com.mercadopago.android.px.testcheckout.pages.CardAssociationResultSuccessPage;
 import com.mercadopago.android.px.testcheckout.pages.CardPage;
 import com.mercadopago.android.px.testcheckout.pages.CashPage;
 import com.mercadopago.android.px.testcheckout.pages.CongratsPage;
@@ -155,7 +157,17 @@ public class DefaultValidator implements CheckoutValidator {
     }
 
     @Override
-    public void validate(final ExpressPaymentPage expressPaymentPage) {
+    public void validate(@NonNull final ExpressPaymentPage expressPaymentPage) {
+        //TODO implement default PX Validations
+    }
+
+    @Override
+    public void validate(@NonNull final CardAssociationResultSuccessPage cardAssociationResultSuccessPage) {
+        //TODO implement default PX Validations
+    }
+
+    @Override
+    public void validate(@NonNull final CardAssociationResultErrorPage cardAssociationResultSuccessPage) {
         //TODO implement default PX Validations
     }
 

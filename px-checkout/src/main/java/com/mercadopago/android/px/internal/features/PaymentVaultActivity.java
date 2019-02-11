@@ -34,6 +34,7 @@ import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.AmountView;
 import com.mercadopago.android.px.internal.view.DiscountDetailDialog;
 import com.mercadopago.android.px.internal.view.GridSpacingItemDecoration;
@@ -610,13 +611,14 @@ public class PaymentVaultActivity extends PXActivity<PaymentVaultPresenter>
     @Override
     public void showEmptyPaymentMethodsError() {
         final String errorMessage = getString(R.string.px_no_payment_methods_found);
-        showError(MercadoPagoError.createNotRecoverable(errorMessage), "");
+        showError(MercadoPagoError.createNotRecoverable(errorMessage), TextUtil.EMPTY);
     }
 
     @Override
     public void showMismatchingPaymentMethodError() {
         final String errorMessage = getString(R.string.px_standard_error_message);
-        showError(MercadoPagoError.createNotRecoverable(errorMessage, MISMATCHING_PAYMENT_METHOD_ERROR), "");
+        showError(MercadoPagoError.createNotRecoverable(errorMessage, MISMATCHING_PAYMENT_METHOD_ERROR),
+            TextUtil.EMPTY);
     }
 
     @Override

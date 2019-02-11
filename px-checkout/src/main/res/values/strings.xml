@@ -134,6 +134,7 @@
     <string name="px_error_description_duplicated_payment">Don\'t worry, your previous payment was approved.</string>
     <string name="px_error_description_max_attempts">As you reached the limit of attempts with this card, use another payment method.</string>
     <string name="px_error_description_high_risk">Use a payment method other than a card.</string>
+    <string name="px_error_description_rejected_by_regulations">You have pending data to update. To pay with Mercado Pago\'s money you must complete the missing data.</string>
     <string name="px_text_card_data_invalid">Review card data</string>
     <string name="px_text_card_enabled">I already enabled my card</string>
 
@@ -141,8 +142,6 @@
     <string name="px_error_message_invalid_item">Invalid item</string>
     <string name="px_error_message_expired_preference">Expired preference</string>
     <string name="px_error_message_inactive_preference">Inactive preference</string>
-    <string name="px_error_message_invalid_default_installments">Invalid installments number by default</string>
-    <string name="px_error_message_invalid_max_installments">Invalid max installments number</string>
     <string name="px_error_message_excluded_all_payment_type">All payments types excluded</string>
     <string name="px_error_message_invalid_installments">Invalid installments number</string>
     <string name="px_error_title">Oops! Something went wrong</string>
@@ -192,7 +191,6 @@
     <string name="px_continue_shopping">Continue</string>
     <string name="px_zero_rate">Interest free</string>
     <string name="px_exit_label">Exit</string>
-    <string name="px_cancel_payment">Cancel payment</string>
     <string name="px_input_button_back">Previous</string>
     <string name="px_input_button_next">Continue</string>
     <string name="px_hour">hour</string>

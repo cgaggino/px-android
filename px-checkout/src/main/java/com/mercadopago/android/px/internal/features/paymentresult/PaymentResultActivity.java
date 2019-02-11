@@ -49,7 +49,6 @@ import com.mercadopago.android.px.internal.features.paymentresult.components.Ins
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionsTertiaryInfoRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.PaymentResultContainer;
 import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultProps;
-import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;

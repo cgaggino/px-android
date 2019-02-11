@@ -9,7 +9,6 @@ import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -314,106 +313,6 @@ public class PaymentResultTest {
 
         @Override
         public String getRejectionLabel() {
-            return null;
-        }
-
-        @Override
-        public String getCancelPayment() {
-            return null;
-        }
-
-        @Override
-        public String getContinueShopping() {
-            return null;
-        }
-
-        @Override
-        public String getChangePaymentMethodLabel() {
-            return null;
-        }
-
-        @Override
-        public String getCardEnabled() {
-            return null;
-        }
-
-        @Override
-        public String getErrorTitle() {
-            return null;
-        }
-
-        @Override
-        public String getPendingContingencyBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getPendingReviewManualBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedCallForAuthBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedCardDisabledBodyErrorDescription(String paymentMethodName) {
-            return null;
-        }
-
-        @Override
-        public String getRejectedInsufficientAmountBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedInsufficientAmountBodyErrorSecondDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedOtherReasonBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedByBankBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedInsufficientDataBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedDuplicatedPaymentBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedMaxAttemptsBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedHighRiskBodyErrorDescription() {
-            return null;
-        }
-
-        @Override
-        public String getRejectedCallForAuthBodyActionText(final String paymentMethodName) {
-            return null;
-        }
-
-        @Override
-        public String getRejectedCallForAuthBodySecondaryTitle() {
-            return null;
-        }
-
-        @Override
-        public String getReceiptDescription(final Long receiptId) {
             return null;
         }
     }

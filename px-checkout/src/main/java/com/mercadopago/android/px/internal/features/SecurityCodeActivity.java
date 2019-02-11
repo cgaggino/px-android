@@ -24,13 +24,13 @@ import com.mercadopago.android.px.internal.callbacks.card.CardSecurityCodeEditTe
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.card.CardSecurityCodeTextWatcher;
-import com.mercadopago.android.px.internal.features.providers.SecurityCodeProviderImpl;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ResourceUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.MPEditText;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.Card;
@@ -43,12 +43,10 @@ import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
-public class SecurityCodeActivity extends PXActivity implements SecurityCodeActivityView {
+public class SecurityCodeActivity extends PXActivity<SecurityCodePresenter> implements SecurityCodeActivityView {
 
     private static final String CARD_INFO_BUNDLE = "cardInfoBundle";
     private static final String PAYMENT_RECOVERY_BUNDLE = "paymentRecoveryBundle";
-
-    protected SecurityCodePresenter mSecurityCodePresenter;
 
     public static final String ERROR_STATE = "textview_error";
     public static final String NORMAL_STATE = "textview_normal";
@@ -82,14 +80,14 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
             getActivityParameters();
             configurePresenter();
             setContentView();
-            mSecurityCodePresenter.initialize();
+            presenter.initialize();
         }
     }
 
     @Override
     public void onSaveInstanceState(final Bundle outState) {
-        outState.putSerializable(CARD_INFO_BUNDLE, mSecurityCodePresenter.getCardInfo());
-        outState.putSerializable(PAYMENT_RECOVERY_BUNDLE, mSecurityCodePresenter.getPaymentRecovery());
+        outState.putSerializable(CARD_INFO_BUNDLE, presenter.getCardInfo());
+        outState.putSerializable(PAYMENT_RECOVERY_BUNDLE, presenter.getPaymentRecovery());
 
         super.onSaveInstanceState(outState);
     }
@@ -99,19 +97,20 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
         if (savedInstanceState != null) {
             final Session session = Session.getSession(this);
             final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
-            mSecurityCodePresenter = new SecurityCodePresenter(paymentSettings);
+            presenter = new SecurityCodePresenter(paymentSettings, session.getCardTokenRepository(),
+                session.getMercadoPagoESC());
 
-            mSecurityCodePresenter.setToken(paymentSettings.getToken());
-            mSecurityCodePresenter.setCard(session.getConfigurationModule().getUserSelectionRepository().getCard());
-            mSecurityCodePresenter
+            presenter.setToken(paymentSettings.getToken());
+            presenter.setCard(session.getConfigurationModule().getUserSelectionRepository().getCard());
+            presenter
                 .setPaymentMethod(session.getConfigurationModule().getUserSelectionRepository().getPaymentMethod());
-            mSecurityCodePresenter.setCardInfo((CardInfo) savedInstanceState.getSerializable(CARD_INFO_BUNDLE));
-            mSecurityCodePresenter
+            presenter.setCardInfo((CardInfo) savedInstanceState.getSerializable(CARD_INFO_BUNDLE));
+            presenter
                 .setPaymentRecovery((PaymentRecovery) savedInstanceState.getSerializable(PAYMENT_RECOVERY_BUNDLE));
 
             configurePresenter();
             setContentView();
-            mSecurityCodePresenter.initialize();
+            presenter.initialize();
         }
 
         super.onRestoreInstanceState(savedInstanceState);
@@ -123,18 +122,16 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
     }
 
     private void createPresenter() {
-        if (mSecurityCodePresenter == null) {
+        if (presenter == null) {
             final Session session = Session.getSession(this);
-            mSecurityCodePresenter = new SecurityCodePresenter(session.getConfigurationModule().getPaymentSettings());
+            presenter = new SecurityCodePresenter(session.getConfigurationModule().getPaymentSettings(),
+                session.getCardTokenRepository(), session.getMercadoPagoESC());
         }
     }
 
     private void configurePresenter() {
-        if (mSecurityCodePresenter != null) {
-            mSecurityCodePresenter.attachView(this);
-            SecurityCodeProviderImpl provider =
-                new SecurityCodeProviderImpl(this);
-            mSecurityCodePresenter.attachResourcesProvider(provider);
+        if (presenter != null) {
+            presenter.attachView(this);
         }
     }
 
@@ -148,11 +145,11 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
         PaymentRecovery paymentRecovery =
             JsonUtil.getInstance().fromJson(getIntent().getStringExtra("paymentRecovery"), PaymentRecovery.class);
 
-        mSecurityCodePresenter.setToken(token);
-        mSecurityCodePresenter.setCard(card);
-        mSecurityCodePresenter.setPaymentMethod(paymentMethod);
-        mSecurityCodePresenter.setCardInfo(cardInfo);
-        mSecurityCodePresenter.setPaymentRecovery(paymentRecovery);
+        presenter.setToken(token);
+        presenter.setCard(card);
+        presenter.setPaymentMethod(paymentMethod);
+        presenter.setCardInfo(cardInfo);
+        presenter.setPaymentRecovery(paymentRecovery);
     }
 
     public void setContentView() {
@@ -198,9 +195,20 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
 
     @Override
     public void onBackPressed() {
+        presenter.trackAbort();
+        configureFinish();
+        finish();
+    }
+
+    @Override
+    public void onBackButtonPressed() {
+        configureFinish();
+        super.onBackPressed();
+    }
+
+    private void configureFinish() {
         final Intent returnIntent = new Intent();
         setResult(RESULT_CANCELED, returnIntent);
-        finish();
         overrideTransitionOut();
     }
 
@@ -239,26 +247,26 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
         mCardView.setSize(CardRepresentationModes.BIG_SIZE);
         mCardView.inflateInParent(mCardContainer, true);
         mCardView.initializeControls();
-        mCardView.setPaymentMethod(mSecurityCodePresenter.getPaymentMethod());
-        mCardView.setSecurityCodeLength(mSecurityCodePresenter.getSecurityCodeLength());
-        mCardView.setSecurityCodeLocation(mSecurityCodePresenter.getSecurityCodeLocation());
-        mCardView.setCardNumberLength(mSecurityCodePresenter.getCardNumberLength());
-        mCardView.setLastFourDigits(mSecurityCodePresenter.getCardInfo().getLastFourDigits());
+        mCardView.setPaymentMethod(presenter.getPaymentMethod());
+        mCardView.setSecurityCodeLength(presenter.getSecurityCodeLength());
+        mCardView.setSecurityCodeLocation(presenter.getSecurityCodeLocation());
+        mCardView.setCardNumberLength(presenter.getCardNumberLength());
+        mCardView.setLastFourDigits(presenter.getCardInfo().getLastFourDigits());
         mCardView.draw(CardView.CARD_SIDE_FRONT);
         mCardView.drawFullCard();
         mCardView.drawEditingSecurityCode("");
-        mSecurityCodePresenter.setSecurityCodeCardType();
+        presenter.setSecurityCodeCardType();
     }
 
     private void setSecurityCodeCardColorFilter() {
-        final int color = ResourceUtil.getCardColor(mSecurityCodePresenter.getPaymentMethod().getId(), this);
+        final int color = ResourceUtil.getCardColor(presenter.getPaymentMethod().getId(), this);
         mSecurityCodeCardIcon.setColorFilter(ContextCompat.getColor(this, color), PorterDuff.Mode.DST_OVER);
     }
 
     @Override
     public void initialize() {
         initializeControls();
-        mSecurityCodePresenter.initializeSettings();
+        presenter.initializeSettings();
         loadViews();
     }
 
@@ -280,6 +288,12 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
     public void showFrontSecurityCodeCardView() {
         mSecurityCodeCardIcon.setImageResource(R.drawable.px_amex_tiny_card_cvv_screen);
         setSecurityCodeCardColorFilter();
+    }
+
+    @Override
+    public void showStandardErrorMessage() {
+        final String standardErrorMessage = getString(R.string.px_standard_error_message);
+        showError(MercadoPagoError.createNotRecoverable(standardErrorMessage), TextUtil.EMPTY);
     }
 
     @Override
@@ -310,8 +324,8 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
 
                 @Override
                 public void saveSecurityCode(CharSequence s) {
-                    mSecurityCodePresenter.saveSecurityCode(s.toString());
-                    mCardView.setSecurityCodeLocation(mSecurityCodePresenter.getSecurityCodeLocation());
+                    presenter.saveSecurityCode(s.toString());
+                    mCardView.setSecurityCodeLocation(presenter.getSecurityCodeLocation());
                     mCardView.drawEditingSecurityCode(s.toString());
                 }
 
@@ -335,7 +349,7 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
 
     private boolean onNextKey(int actionId, KeyEvent event) {
         if (isNextKey(actionId, event)) {
-            mSecurityCodePresenter.validateSecurityCodeInput();
+            presenter.validateSecurityCodeInput();
             return true;
         }
         return false;
@@ -356,7 +370,7 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSecurityCodePresenter.validateSecurityCodeInput();
+                presenter.validateSecurityCodeInput();
             }
         });
     }
@@ -365,7 +379,7 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                onBackButtonPressed();
             }
         });
     }
@@ -420,7 +434,7 @@ public class SecurityCodeActivity extends PXActivity implements SecurityCodeActi
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                mSecurityCodePresenter.recoverFromFailure();
+                presenter.recoverFromFailure();
             } else {
                 setResult(RESULT_CANCELED, data);
                 finish();

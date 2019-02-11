@@ -84,6 +84,9 @@ public final class MercadoPagoCheckout {
         if (context instanceof Activity) {
             ((Activity) context).startActivityForResult(checkoutIntent, requestCode);
         } else {
+            // Since android 9, we are forced to startActivities from an Activity context or use NEW_TASK flag.
+            //https://developer.android.com/about/versions/pie/android-9.0-changes-all#fant-required
+            checkoutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(checkoutIntent);
         }
     }

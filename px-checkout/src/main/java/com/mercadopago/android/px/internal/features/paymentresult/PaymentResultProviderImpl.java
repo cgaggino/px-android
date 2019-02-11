@@ -7,7 +7,7 @@ import com.mercadopago.android.px.R;
 public class PaymentResultProviderImpl implements PaymentResultProvider {
     private final Context context;
 
-    public PaymentResultProviderImpl(@NonNull final Context context) {
+    /* default */ PaymentResultProviderImpl(@NonNull final Context context) {
         this.context = context;
     }
 
@@ -82,11 +82,6 @@ public class PaymentResultProviderImpl implements PaymentResultProvider {
     }
 
     @Override
-    public String getEmptyText() {
-        return context.getString(R.string.px_empty_string);
-    }
-
-    @Override
     public String getPendingLabel() {
         return context.getString(R.string.px_pending_label);
     }
@@ -94,109 +89,5 @@ public class PaymentResultProviderImpl implements PaymentResultProvider {
     @Override
     public String getRejectionLabel() {
         return context.getString(R.string.px_rejection_label);
-    }
-
-    @Override
-    public String getCancelPayment() {
-        return context.getString(R.string.px_cancel_payment);
-    }
-
-    @Override
-    public String getContinueShopping() {
-        return context.getString(R.string.px_continue_shopping);
-    }
-
-    @Override
-    public String getChangePaymentMethodLabel() {
-        return context.getString(R.string.px_text_pay_with_other_method);
-    }
-
-    @Override
-    public String getCardEnabled() {
-        return context.getString(R.string.px_text_card_enabled);
-    }
-
-    @Override
-    public String getErrorTitle() {
-        return context.getString(R.string.px_what_can_do);
-    }
-
-    @Override
-    public String getPendingContingencyBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_contingency);
-    }
-
-    @Override
-    public String getPendingReviewManualBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_review_manual);
-    }
-
-    @Override
-    public String getRejectedCallForAuthBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_call);
-    }
-
-    @Override
-    public String getRejectedCardDisabledBodyErrorDescription(String paymentMethodName) {
-        return context.getString(R.string.px_error_description_card_disabled, paymentMethodName);
-    }
-
-    @Override
-    public String getRejectedInsufficientAmountBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_insufficient_amount);
-    }
-
-    @Override
-    public String getRejectedInsufficientAmountBodyErrorSecondDescription() {
-        return context.getString(R.string.px_error_description_second_insufficient_amount);
-    }
-
-    @Override
-    public String getRejectedOtherReasonBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_other_reason);
-    }
-
-    @Override
-    public String getRejectedByBankBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_by_bank);
-    }
-
-    @Override
-    public String getRejectedInsufficientDataBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_insufficient_data);
-    }
-
-    @Override
-    public String getRejectedDuplicatedPaymentBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_duplicated_payment);
-    }
-
-    @Override
-    public String getRejectedMaxAttemptsBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_max_attempts);
-    }
-
-    @Override
-    public String getRejectedHighRiskBodyErrorDescription() {
-        return context.getString(R.string.px_error_description_high_risk);
-    }
-
-    @Override
-    public String getRejectedCallForAuthBodyActionText(final String paymentMethodName) {
-        return String.format(context.getString(R.string.px_text_authorized_call_for_authorize), paymentMethodName);
-    }
-
-    @Override
-    public String getRejectedCallForAuthBodySecondaryTitle() {
-        return context.getString(R.string.px_error_secondary_title_call);
-    }
-
-    @Override
-    public String getReceiptDescription(final Long receiptId) {
-        String description = "";
-        if (receiptId != null) {
-            description = context.getResources().getString(R.string.px_receipt, String.valueOf(receiptId));
-        }
-        return description;
     }
 }

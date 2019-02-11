@@ -7,15 +7,16 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
 import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultDecorator;
 import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultProvider;
-import com.mercadopago.android.px.internal.viewmodel.HeaderTitleFormatter;
 import com.mercadopago.android.px.internal.features.paymentresult.model.Badge;
 import com.mercadopago.android.px.internal.features.paymentresult.props.HeaderProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultBodyProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultProps;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.LoadingComponent;
 import com.mercadopago.android.px.internal.view.RendererFactory;
+import com.mercadopago.android.px.internal.viewmodel.HeaderTitleFormatter;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethods;
 import com.mercadopago.android.px.model.PaymentResult;
@@ -110,17 +111,13 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
                     .setCurrencyId(props.currencyId)
                     .setProcessingMode(props.processingMode)
                     .build();
-            body = new Body(bodyProps, getDispatcher(), paymentResultProvider);
+            body = new Body(bodyProps, getDispatcher());
         }
         return body;
     }
 
-    /* default */ FooterContainer getFooterContainer() {
-        return new FooterContainer(new FooterContainer.Props(
-            props.paymentResult, props.getPaymentResultScreenPreference()),
-            getDispatcher(),
-            paymentResultProvider
-        );
+    /* default */ FooterPaymentResult getFooterContainer() {
+        return new FooterPaymentResult(props.paymentResult, getDispatcher());
     }
 
     private String getHeaderMode() {
@@ -268,7 +265,7 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         if (props.hasInstructions()) { // Si el medio off tiene instrucciones, tomo las del titulo.
             return props.getInstructionsTitle();
         } else if (isPaymentMethodOff(props.paymentResult)) { // Caso off, sin instrucciones.
-            return paymentResultProvider.getEmptyText();
+            return TextUtil.EMPTY;
         } else {
 
             final String paymentMethodName = props.paymentResult.getPaymentData().getPaymentMethod().getName();
@@ -312,7 +309,7 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
             }
         }
 
-        return paymentResultProvider.getEmptyText();
+        return TextUtil.EMPTY;
     }
 
     private CharSequence getCallForAuthFormattedTitle(@NonNull final PaymentResultProps props) {
@@ -327,17 +324,17 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         if (!props.isPluginPaymentResult(props.paymentResult) && props.hasCustomizedLabel()) {
             return props.getPreferenceLabel();
         } else if (props.paymentResult == null) {
-            return paymentResultProvider.getEmptyText();
+            return TextUtil.EMPTY;
         } else {
             if (isLabelEmpty(props.paymentResult)) {
-                return paymentResultProvider.getEmptyText();
+                return TextUtil.EMPTY;
             } else if (isLabelPending(props.paymentResult)) {
                 return paymentResultProvider.getPendingLabel();
             } else if (isLabelError(props.paymentResult)) {
                 return paymentResultProvider.getRejectionLabel();
             }
         }
-        return paymentResultProvider.getEmptyText();
+        return TextUtil.EMPTY;
     }
 
     private boolean isLabelEmpty(@NonNull final PaymentResult paymentResult) {

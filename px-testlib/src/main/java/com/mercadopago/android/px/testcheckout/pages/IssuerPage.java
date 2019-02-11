@@ -32,6 +32,11 @@ public class IssuerPage extends PageObject<CheckoutValidator> {
         return new InstallmentsPage(validator);
     }
 
+    public CardAssociationResultSuccessPage enterBankOptionToCardAssociationResult(final int backOption) {
+        selectOption(backOption);
+        return new CardAssociationResultSuccessPage(validator);
+    }
+
     private void selectOption(final int bankOption) {
         ViewInteraction recyclerView = onView(withId(com.mercadopago.android.px.R.id.mpsdkActivityIssuersView));
         recyclerView.perform(scrollToPosition(bankOption));

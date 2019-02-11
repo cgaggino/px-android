@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardActivity;
@@ -38,26 +37,21 @@ public class CardAssociationResultErrorActivity extends AppCompatActivity {
             .setupStatusBarColor(ContextCompat.getColor(this, R.color.px_orange_status_bar));
 
         final MeliButton retryButton = findViewById(R.id.mpsdkCardAssociationResultRetryButton);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                // Call GuessingCard flow again forwarding the result
-                final Intent intent = new Intent(CardAssociationResultErrorActivity.this, GuessingCardActivity.class);
-                intent.putExtra(PARAM_ACCESS_TOKEN, accessToken);
-                intent.putExtra(GuessingCardActivity.PARAM_INCLUDES_PAYMENT, false);
-                intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-                startActivity(intent);
+        retryButton.setOnClickListener(v -> {
+            // Call GuessingCard flow again forwarding the result
+            final Intent guessingCardActivityIntent =
+                new Intent(CardAssociationResultErrorActivity.this, GuessingCardActivity.class);
+            guessingCardActivityIntent.putExtra(PARAM_ACCESS_TOKEN, accessToken);
+            guessingCardActivityIntent.putExtra(GuessingCardActivity.PARAM_INCLUDES_PAYMENT, false);
+            guessingCardActivityIntent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+            startActivity(guessingCardActivityIntent);
 
-                finish();
-            }
+            finish();
         });
         final MeliButton exitButton = findViewById(R.id.mpsdkCardAssociationResultExitButton);
-        exitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                setResult(RESULT_CANCELED);
-                finish();
-            }
+        exitButton.setOnClickListener(v -> {
+            setResult(RESULT_CANCELED);
+            finish();
         });
 
         new CardAssociationResultViewTrack(CardAssociationResultViewTrack.Type.ERROR).track();

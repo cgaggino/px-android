@@ -250,7 +250,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     @Override
     public void onViewStateRestored(@Nullable final Bundle savedInstanceState) {
         if (savedInstanceState != null && presenter != null) {
-            presenter.fromBundle(savedInstanceState);
+            presenter.recoverFromBundle(savedInstanceState);
         }
         super.onViewStateRestored(savedInstanceState);
     }
@@ -258,7 +258,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         if (presenter != null) {
-            super.onSaveInstanceState(presenter.toBundle(outState));
+            super.onSaveInstanceState(presenter.storeInBundle(outState));
         } else {
             super.onSaveInstanceState(outState);
         }

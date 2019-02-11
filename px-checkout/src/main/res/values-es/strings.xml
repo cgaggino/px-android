@@ -37,7 +37,7 @@
     <string name="px_card_installments_title">¿En cuántas cuotas?</string>
     <string name="px_select_installments_title">Seleccioná la cuota</string>
 
-<!-- Payer Information -->
+    <!-- Payer Information -->
     <string name="px_payer_information_modify">Modificar</string>
 
     <!-- Terms And Conditions -->
@@ -127,14 +127,13 @@
     <string name="px_error_description_duplicated_payment">Igual no te preocupes que tu pago anterior se efectuó con éxito.</string>
     <string name="px_error_description_max_attempts">Como llegaste al límite de intentos con esta tarjeta, usa otro medio de pago.</string>
     <string name="px_error_description_high_risk">Usa un medio de pago distinto de tarjeta.</string>
+    <string name="px_error_description_rejected_by_regulations">Tienes datos pendientes para actualizar. Para pagar con dinero en cuenta debes completar los datos faltantes.</string>
     <string name="px_error_secondary_title_call">¿No pudiste autorizarlo?</string>
 
     <!-- Error messages -->
     <string name="px_error_message_invalid_item">Item inválido</string>
     <string name="px_error_message_expired_preference">Preferencia expirada</string>
     <string name="px_error_message_inactive_preference">Preferencia inactiva</string>
-    <string name="px_error_message_invalid_default_installments">Número de cuotas por defecto inválido</string>
-    <string name="px_error_message_invalid_max_installments">Número máximo de cuotas inválido</string>
     <string name="px_error_message_excluded_all_payment_type">Todos los tipos de pagos excluídos</string>
     <string name="px_error_message_invalid_installments">Número de cuotas inválido</string>
     <string name="px_error_title">¡Uy! Algo salió mal</string>
@@ -171,7 +170,6 @@
     <string name="px_continue_shopping">Continuar</string>
     <string name="px_zero_rate">Sin interés</string>
     <string name="px_exit_label">Salir</string>
-    <string name="px_cancel_payment">Cancelar pago</string>
     <string name="px_input_button_back">Anterior</string>
     <string name="px_input_button_next">Continuar</string>
     <string name="px_hour">hora</string>
