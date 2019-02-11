@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.internal.features;
+package com.mercadopago.android.px.internal.features.bank_deal_detail;
 
 import android.content.Context;
 import android.content.Intent;

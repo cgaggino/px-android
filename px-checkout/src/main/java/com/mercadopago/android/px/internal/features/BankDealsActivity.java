@@ -13,6 +13,7 @@ import com.mercadopago.android.px.internal.adapters.BankDealsAdapter;
 import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.features.bank_deal_detail.BankDealDetailActivity;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;

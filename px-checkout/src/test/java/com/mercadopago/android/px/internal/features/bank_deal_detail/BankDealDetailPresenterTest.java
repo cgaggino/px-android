@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.internal.features;
+package com.mercadopago.android.px.internal.features.bank_deal_detail;
 
 import android.support.annotation.NonNull;
 import org.junit.Before;

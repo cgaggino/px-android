@@ -82,7 +82,7 @@
             android:name=".internal.features.review_and_confirm.ReviewAndConfirmActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
-            android:name=".internal.features.BankDealDetailActivity"
+            android:name=".internal.features.bank_deal_detail.BankDealDetailActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
             android:name=".internal.features.guessing_card.card_association_result.CardAssociationResultSuccessActivity"

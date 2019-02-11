@@ -1,10 +1,10 @@
-package com.mercadopago.android.px.internal.features;
+package com.mercadopago.android.px.internal.features.bank_deal_detail;
 
 import com.mercadopago.android.px.internal.base.BasePresenter;
 import com.mercadopago.android.px.tracking.internal.views.BankDealsDetailViewTracker;
 import com.squareup.picasso.Callback;
 
-public class BankDealDetailPresenter extends BasePresenter<BankDealDetail.View> implements Callback {
+/* default */ class BankDealDetailPresenter extends BasePresenter<BankDealDetail.View> implements Callback {
 
     @Override
     public void attachView(final BankDealDetail.View view) {
