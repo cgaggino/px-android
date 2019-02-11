@@ -42,18 +42,22 @@ import java.util.List;
 
                 @Override
                 public void onSuccess(final List<BankDeal> bankDeals) {
-                    solveBankDeals(bankDeals);
+                    if (isViewAttached()) {
+                        solveBankDeals(bankDeals);
+                    }
                 }
 
                 @Override
                 public void onFailure(final MercadoPagoError error) {
-                    failureRecovery = new FailureRecovery() {
-                        @Override
-                        public void recover() {
-                            getBankDeals();
-                        }
-                    };
-                    getView().showApiExceptionError(error);
+                    if (isViewAttached()) {
+                        failureRecovery = new FailureRecovery() {
+                            @Override
+                            public void recover() {
+                                getBankDeals();
+                            }
+                        };
+                        getView().showApiExceptionError(error);
+                    }
                 }
             });
     }
