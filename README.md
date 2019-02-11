@@ -60,7 +60,8 @@ checkout.startPayment(activityOrContext, requestCode);
 ```
 
 ### Generating your preference id
-```curl -X POST \
+```shell
+curl -X POST \
      'https://api.mercadopago.com/checkout/preferences?access_token= ACCESS_TOKEN_ENV' \
      -H 'Content-Type: application/json' \
      -d '{
