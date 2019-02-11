@@ -246,6 +246,4 @@
     <!-- Boleto -->
     <string name="px_fill_your_data">Digite seus dados…</string>
     <string name="px_bolbradesco_rejection">Não foi possível processar o seu pagamento, desculpe-nos</string>
-
-    <string name="px_empty_string"></string>
 </resources>
