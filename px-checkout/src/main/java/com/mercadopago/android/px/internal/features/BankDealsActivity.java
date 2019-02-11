@@ -31,10 +31,6 @@ public class BankDealsActivity extends PXActivity<BankDealsPresenter>
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.px_activity_bank_deals);
-        initialize();
-    }
-
-    private void initialize() {
         initializeControls();
         createPresenter();
         presenter.initialize();
