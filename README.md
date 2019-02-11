@@ -50,7 +50,7 @@ import com.mercadopago.android.px.core.MercadoPagoCheckout.Builder;
 
 2) Set your PublicKey and PreferenceId
 ```java
-final MercadoPagoCheckout checkout = new MercadoPagoCheckout.Builder("your_public_key", "your_checkout_preference_id")
+final MercadoPagoCheckout checkout = new MercadoPagoCheckout.Builder("public_key", "checkout_preference_id")
     .build();
 ```
 
@@ -61,7 +61,7 @@ checkout.startPayment(activityOrContext, requestCode);
 
 ### One line integration
 ```java
-new MercadoPagoCheckout.Builder("your_public_key", "your_checkout_preference_id")
+new MercadoPagoCheckout.Builder("public_key", "checkout_preference_id")
     .build()
     .startPayment(activityOrContext, requestCode);
 ```
