@@ -25,8 +25,6 @@ import java.util.List;
 
         void getBankDeals();
 
-        void solveBankDeals(@NonNull final List<BankDeal> bankDeals);
-
         void recoverFromFailure();
 
         void initialize();

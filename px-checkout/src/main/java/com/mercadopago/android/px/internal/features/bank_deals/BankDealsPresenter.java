@@ -62,8 +62,7 @@ import java.util.List;
             });
     }
 
-    @Override
-    public void solveBankDeals(@NonNull final List<BankDeal> bankDeals) {
+    private void solveBankDeals(@NonNull final List<BankDeal> bankDeals) {
         getView().showBankDeals(bankDeals, this);
     }
 
