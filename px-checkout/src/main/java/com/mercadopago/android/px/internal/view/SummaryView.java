@@ -94,7 +94,7 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
             bigHeaderDescriptor.setVisibility(GONE);
         }
 
-        totalAmountDescriptor.setTextSize(R.dimen.px_m_text);
+        totalAmountDescriptor.setTextSize(R.dimen.px_l_text);
         totalAmountDescriptor.setBold(AmountDescriptorView.Position.RIGHT);
         totalAmountDescriptor.update(model.total);
 

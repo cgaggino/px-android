@@ -24,7 +24,7 @@
             android:maxLines="1"
             android:textAppearance="@style/MLFont.Regular"
             android:textColor="@color/px_expressCheckoutTextColor"
-            android:textSize="@dimen/px_xs_text"
+            android:textSize="@dimen/px_s_text"
             tools:text="Total"/>
 
         <ImageView
@@ -45,6 +45,6 @@
         android:gravity="center_vertical|end"
         android:textAppearance="@style/MLFont.Regular"
         android:textColor="@color/px_expressCheckoutTextColor"
-        android:textSize="@dimen/px_xs_text"
+        android:textSize="@dimen/px_s_text"
         tools:text="$124"/>
 </merge>
