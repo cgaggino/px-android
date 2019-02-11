@@ -195,7 +195,7 @@ public class MercadoPagoCheckout {
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout} For more information check the following
          * links {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>} {@see <a
-         * href="https://www.mercadopago.com.ar/developers/es/reference/preferences/_preferences/post/">create
+         * href="https://www.mercadopago.com.ar/developers/es/reference/preferences/_checkout_preferences/post/">create
          * preference</a>}
          *
          * @param publicKey merchant public key / collector public key
