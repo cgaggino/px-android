@@ -59,10 +59,22 @@ final MercadoPagoCheckout checkout = new MercadoPagoCheckout.Builder("your_publi
 checkout.startPayment(activityOrContext, requestCode);
 ```
 
-### Generate your preference id
+### One line integration
+```java
+new MercadoPagoCheckout.Builder("your_public_key", "your_checkout_preference_id")
+    .build()
+    .startPayment(activityOrContext, requestCode);
+```
+
+### Credentials
+Get your [Credentials](https://www.mercadopago.com.ar/developers/en/guides/faqs/credentials/)
+
+![Screenshot Credentials](https://i.imgur.com/Oroq90g.png)
+
+### Create your preference id
 ```shell
 curl -X POST \
-     'https://api.mercadopago.com/checkout/preferences?access_token= ACCESS_TOKEN_ENV' \
+     'https://api.mercadopago.com/checkout/preferences?access_token=ACCESS_TOKEN' \
      -H 'Content-Type: application/json' \
      -d '{
            "items": [
@@ -75,13 +87,6 @@ curl -X POST \
                }
            ]
      }'
-```
-
-### One line integration
-```java
-new MercadoPagoCheckout.Builder("your_public_key", "your_checkout_preference_id")
-    .build()
-    .startPayment(activityOrContext, requestCode);
 ```
 
 ### Advanced integration
