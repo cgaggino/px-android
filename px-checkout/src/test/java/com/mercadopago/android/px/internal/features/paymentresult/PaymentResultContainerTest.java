@@ -7,6 +7,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.components.Hea
 import com.mercadopago.android.px.internal.features.paymentresult.components.PaymentResultContainer;
 import com.mercadopago.android.px.internal.features.paymentresult.props.HeaderProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultProps;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.mocks.PaymentMethods;
 import com.mercadopago.android.px.mocks.PaymentResults;
@@ -49,7 +50,6 @@ public class PaymentResultContainerTest {
             .thenReturn(REJECTED_INSUFFICIENT_AMOUNT_TITLE);
         when(paymentResultProvider.getRejectedBadFilledCardTitle()).thenReturn(REJECTED_BAD_FILLED_TITLE);
         when(paymentResultProvider.getRejectedCallForAuthorizeTitle()).thenReturn(REJECTED_CALL_FOR_AUTH_TITLE);
-        when(paymentResultProvider.getEmptyText()).thenReturn(EMPTY_TITLE);
         when(paymentResultProvider.getPendingLabel()).thenReturn(PENDING_LABEL);
         when(paymentResultProvider.getRejectionLabel()).thenReturn(REJECTION_LABEL);
     }
@@ -474,7 +474,7 @@ public class PaymentResultContainerTest {
 
         final HeaderProps headerProps = getHeaderPropsFromContainerWith(paymentResult);
 
-        Assert.assertEquals(headerProps.title, paymentResultProvider.getEmptyText());
+        Assert.assertEquals(headerProps.title, TextUtil.EMPTY);
     }
 
 //    @Test
@@ -532,7 +532,7 @@ public class PaymentResultContainerTest {
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
         final HeaderProps headerProps = getHeaderPropsFromContainerWith(paymentResult);
 
-        Assert.assertEquals(headerProps.label, paymentResultProvider.getEmptyText());
+        Assert.assertEquals(headerProps.label, TextUtil.EMPTY);
     }
 
     @NonNull
@@ -545,7 +545,7 @@ public class PaymentResultContainerTest {
         final PaymentResult paymentResult = PaymentResults.getStatusInProcessContingencyPaymentResult();
         final HeaderProps headerProps = getHeaderPropsFromContainerWith(paymentResult);
 
-        Assert.assertEquals(headerProps.label, paymentResultProvider.getEmptyText());
+        Assert.assertEquals(headerProps.label, TextUtil.EMPTY);
     }
 
     @Test
@@ -553,7 +553,7 @@ public class PaymentResultContainerTest {
         final PaymentResult paymentResult = PaymentResults.getPaymentMethodOffPaymentResult();
         final HeaderProps headerProps = getHeaderPropsFromContainerWith(paymentResult);
 
-        Assert.assertEquals(headerProps.label, paymentResultProvider.getEmptyText());
+        Assert.assertEquals(headerProps.label, TextUtil.EMPTY);
     }
 
     @Test
@@ -600,7 +600,7 @@ public class PaymentResultContainerTest {
             .build();
         final HeaderProps headerProps = getHeaderPropsFromContainerWith(paymentResult);
 
-        Assert.assertEquals(headerProps.label, paymentResultProvider.getEmptyText());
+        Assert.assertEquals(headerProps.label, TextUtil.EMPTY);
     }
 
 //    @Test

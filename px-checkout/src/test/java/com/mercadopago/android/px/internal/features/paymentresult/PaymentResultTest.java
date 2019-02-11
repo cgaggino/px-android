@@ -302,11 +302,6 @@ public class PaymentResultTest {
         }
 
         @Override
-        public String getEmptyText() {
-            return null;
-        }
-
-        @Override
         public String getPendingLabel() {
             return null;
         }
