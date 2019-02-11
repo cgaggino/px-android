@@ -68,6 +68,7 @@ public class BankDealsActivity extends PXActivity<BankDealsPresenter>
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
+            presenter.attachView(this);
             if (resultCode == Activity.RESULT_OK) {
                 presenter.recoverFromFailure();
             } else {
