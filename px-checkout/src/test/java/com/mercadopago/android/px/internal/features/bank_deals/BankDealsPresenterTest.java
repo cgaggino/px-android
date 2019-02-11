@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.internal.features;
+package com.mercadopago.android.px.internal.features.bank_deals;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
