@@ -59,7 +59,7 @@ final MercadoPagoCheckout checkout = new MercadoPagoCheckout.Builder("your_publi
 checkout.startPayment(activityOrContext, requestCode);
 ```
 
-### Generating your preference id
+### Generate your preference id
 ```shell
 curl -X POST \
      'https://api.mercadopago.com/checkout/preferences?access_token= ACCESS_TOKEN_ENV' \
