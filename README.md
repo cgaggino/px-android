@@ -87,7 +87,7 @@ curl -X POST \
                }
            ],
            "payer": {
-        	  "email": "payer@email"
+               "email": "payer@email"
            }
      }'
 ```
