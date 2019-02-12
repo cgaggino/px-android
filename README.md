@@ -85,9 +85,13 @@ curl -X POST \
                "currency_id": "ARS",
                "unit_price": 10.0
                }
-           ]
+           ],
+           "payer": {
+        	      "email": "payer@email"
+           }
      }'
 ```
+* payer email has to be different from the one of credentials.
 
 ### Advanced integration
 Check our official code [reference](http://mercadopago.github.io/px-android/), especially ```MercadoPagoCheckoutBuilder``` object to explore all available functionalities.
